@@ -12,7 +12,7 @@ const {
   createWBToolsLayer,
 } = layer;
 
-class SvgComponent extends React.Component {
+class SvgEdit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -47,7 +47,6 @@ class SvgComponent extends React.Component {
         if (JSON.stringify(nextProps.wBToolsInfo) !== JSON.stringify(this.props.wBToolsInfo)) {
           handleSetPosition(nextProps.wBToolsInfo.transform, nextProps.wBToolsInfo.tool);
           if (nextProps.wBToolsInfo.tool !== this.props.wBToolsInfo.tool) {
-            console.log(nextProps.wBToolsInfo.tool);
             handleToolsChange(nextProps.wBToolsInfo.tool);
           }
         }
@@ -178,7 +177,6 @@ class SvgComponent extends React.Component {
     if (type === 'bind') {
       // 绑定鼠标事件
       this.svg.mousemove((e) => {
-        console.log(e);
         const { onMouseChange } = this.props;
         const { handleSetPosition } = this.mouseLayer;
         handleSetPosition({ x: e.offsetX, y: e.offsetY }, onMouseChange);
@@ -232,7 +230,7 @@ class SvgComponent extends React.Component {
   }
 }
 
-SvgComponent.propTypes = {
+SvgEdit.propTypes = {
   role: React.PropTypes.string,
   className: React.PropTypes.string,
   width: React.PropTypes.number,
@@ -248,4 +246,4 @@ SvgComponent.propTypes = {
   onClear: React.PropTypes.func,
 };
 
-export default SvgComponent;
+export default SvgEdit;

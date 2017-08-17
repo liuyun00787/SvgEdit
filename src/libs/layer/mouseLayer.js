@@ -43,7 +43,6 @@ export default ({ role = 'Broadcaster', className = '', type = 'pen', x = 0, y =
     mouse,
     handleSetPosition({ className = '', type = 'pen', x = 0, y = 0, w = 25, h = 25 }, callback) {
       let info = {};
-
       if (role === 'Broadcaster') {
         info = {
           __TYPE__: type,
