@@ -81,6 +81,7 @@ class Broadcaster extends React.Component {
       }, svg, {
 	      onSelect: (tool) => {
 		      const { onWbToolsClick } = that.props;
+		      const { whiteBoardLayer } = that;
 		      whiteBoardLayer.handleSetTools(tool);
 		      if (typeof onWbToolsClick === 'function') {
 			      onWbToolsClick(tool);
