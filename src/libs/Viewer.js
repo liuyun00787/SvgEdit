@@ -21,8 +21,8 @@ class Viewer extends React.Component {
     }, 100);
   }
   componentWillReceiveProps(nextProps) {
-	  const { width, height } = this.props;
-	  const { width: NWidth, height: NHeight, items = [], selectItem = {} } = nextProps;
+	  const { width, height, mouseInfo, items, wBToolsInfo } = this.props;
+	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {} } = nextProps;
 	  if (NWidth !== width || NHeight !== height) {
 		  if (this.whiteBoardLayer) {
 			  this.whiteBoardLayer.handleSetWH({
@@ -33,45 +33,44 @@ class Viewer extends React.Component {
 	  }
     if (this.mouseLayer) {
       const { handleSetPosition } = this.mouseLayer;
-      if (JSON.stringify(nextProps.mouseInfo) !== JSON.stringify(this.props.mouseInfo)) {
+      if (JSON.stringify(NMouseInfo) !== JSON.stringify(mouseInfo)) {
         handleSetPosition({
-          x: nextProps.mouseInfo.x,
-          y: nextProps.mouseInfo.y,
+          x: NMouseInfo.x,
+          y: NMouseInfo.y,
         });
       }
     }
     if (this.wBToolsLayer) {
       const { handleSetPosition, handleToolsChange } = this.wBToolsLayer;
-      if (JSON.stringify(nextProps.wBToolsInfo) !== JSON.stringify(this.props.wBToolsInfo)) {
-        handleSetPosition(nextProps.wBToolsInfo.transform, nextProps.wBToolsInfo.tool);
-        if (nextProps.wBToolsInfo.tool !== this.props.wBToolsInfo.tool) {
-          handleToolsChange(nextProps.wBToolsInfo.tool);
+      if (JSON.stringify(NWBToolsInfo) !== JSON.stringify(wBToolsInfo)) {
+        handleSetPosition(NWBToolsInfo.transform, NWBToolsInfo.tool);
+        if (NWBToolsInfo.tool !== wBToolsInfo.tool) {
+          handleToolsChange(NWBToolsInfo.tool);
         }
       }
     }
     if (this.whiteBoardLayer) {
       const { handleDraw, handleDelete, handleSelectItem } = this.whiteBoardLayer;
-      if (!nextProps.items.length && this.PrevItems.length) {
+      if (!NItems.length && this.PrevItems.length) {
         handleDelete();
         this.PrevItems = [];
         return;
       }
-      if (items.length) {
-        if (JSON.stringify(nextProps.items) !== JSON.stringify(this.PrevItems)) {
-          if (nextProps.items.length < this.PrevItems.length) {
-            const { __ID__ } = selectItem;
+      if (NItems.length) {
+        if (JSON.stringify(NItems) !== JSON.stringify(this.PrevItems)) {
+	        if (NItems.length < this.PrevItems.length) {
             const deleteList = this.PrevItems.filter((t) => {
-              return nextProps.items.findIndex(i => i.__ID__ === t.__ID__) === -1;
+              return NItems.findIndex(i => i.__ID__ === t.__ID__) === -1;
             }) || [];
             if (deleteList.length) {
               handleDelete(deleteList, true);
             }
-            this.PrevItems = [].concat(nextProps.items);
+            this.PrevItems = [].concat(NItems);
           } else {
             const { __ID__ } = selectItem;
             const index = this.PrevItems.findIndex(item => item.__ID__ === __ID__);
             if (index === -1) {
-              const newItem = handleDraw(selectItem);
+              handleDraw(selectItem);
               this.PrevItems.push(selectItem);
             } else {
               const thatItem = handleSelectItem(selectItem.__ID__);
