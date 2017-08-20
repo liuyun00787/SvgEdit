@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 
-export default ({ className = '' }, target) => {
+export default (role, { class: className }, target) => {
   const group = target.group({
     class: classNames('PPTLayer', className),
   });
   return {
-    whiteBoardLayer: group,
+	  layer: group,
   };
 };

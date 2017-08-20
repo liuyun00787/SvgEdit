@@ -9,56 +9,47 @@ const mouseStyle = {
   },
 };
 
-export default ({ role = 'Broadcaster', className = '', type = 'pen', x = 0, y = 0, w = 25, h = 25 }, target) => {
-  let src = '';
-  switch (type) {
-    case 'pen': {
-      src = mouseStyle.pen.src;
-      break;
-    }
-    case 'hand': {
-      src = mouseStyle.hand.src;
-      break;
-    }
-    default: {
-      src = mouseStyle.pen.src;
-    }
-  }
+function getSrc(type) {
+	let src = '';
+	switch (type) {
+		case 'pen': {
+			src = mouseStyle.pen.src;
+			break;
+		}
+		case 'hand': {
+			src = mouseStyle.hand.src;
+			break;
+		}
+		default: {
+			src = mouseStyle.pen.src;
+		}
+	}
+	return src;
+}
+
+export default (role = 'Broadcaster', { class: className, __TYPE__ = 'pen', x = 0, y = 0, w = 25, h = 25 }, target) => {
+  const src = getSrc(__TYPE__);
   const mouse = target.image(src, x, y, w, h).attr({
-    __TYPE__: type,
+    __TYPE__,
     class: classNames('mouse', className),
   });
-  const mouseLayer = target.group({
-    class: 'mouseGroup',
+  const group = target.group({
+    class: 'mouseLayer',
   }).add(mouse);
   return {
-    mouseInfo: {
-      __TYPE__: type,
-      x: x - 1,
-      y: y - h - 1,
-      w,
-      h,
-    },
-    mouseLayer,
-    mouse,
-    handleSetPosition({ className = '', type = 'pen', x = 0, y = 0, w = 25, h = 25 }, callback) {
+	  layer: group,
+    handleSetPosition({ x = 0, y = 0, w = 25, h = 25 }, callback) {
       let info = {};
       if (role === 'Broadcaster') {
         info = {
-          __TYPE__: type,
-          class: classNames('mouse', className),
           x: x - 1,
           y: y - h - 1,
           w,
           h,
         };
-        if (typeof callback === 'function') {
-          callback(info);
-        }
-      } else {
+      }
+      if (role === 'Viewer') {
         info = {
-          __TYPE__: type,
-          class: classNames('mouse', className),
           x,
           y,
           w,
@@ -66,7 +57,20 @@ export default ({ role = 'Broadcaster', className = '', type = 'pen', x = 0, y =
         };
       }
       mouse.attr(info);
+	    if (role === 'Broadcaster' && typeof callback === 'function') {
+		    callback(mouse.attr());
+	    }
       return mouse;
     },
+	  handleSetType(type = 'pen', callback) {
+		  const src = getSrc(type);
+		  mouse.attr({
+			  __TYPE__: type,
+			  src,
+		  });
+		  if (role === 'Broadcaster' && typeof callback === 'function') {
+			  callback(mouse.attr());
+		  }
+	  },
   };
 };

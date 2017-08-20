@@ -1,6 +1,6 @@
 {
   "name": "svgreact",
-  "version": "0.0.20",
+  "version": "0.0.8",
   "main": "lib/index.js",
   "scripts": {
     "dev": "rm -fr lib && mkdir lib && cp -R ./src/assets ./lib/assets && babel src --watch  -d lib",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "immutable": "^3.8.1",
     "imports-loader": "^0.7.1",
     "mousetrap": "^1.6.1",
     "react": "^15.4.0",

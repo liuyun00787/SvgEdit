@@ -1,0 +1,229 @@
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import Mousetrap from 'mousetrap';
+import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
+import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from './layer';
+
+class Broadcaster extends React.Component {
+  constructor(props) {
+    super(props);
+	  this.role = 'Broadcaster';
+    this.state = {};
+    this.historyItems = [];
+    this.groupItems = {};
+    this.PrevItems = [];
+    this.selectItem = null;
+  }
+  componentDidMount() {
+    this.timeoutInit = setTimeout(() => {
+      this.init();
+    }, 100);
+  }
+  componentWillReceiveProps(nextProps) {
+	  const { width, height } = this.props;
+	  const { width: NWidth, height: NHeight } = nextProps;
+	  if (NWidth !== width || NHeight !== height) {
+		  if (this.whiteBoardLayer) {
+			  this.whiteBoardLayer.handleSetWH({
+				  width: NWidth,
+				  height: NHeight,
+			  });
+		  }
+	  }
+  }
+  shouldComponentUpdate(nextProps) {
+	  const { width, height, className } = this.props;
+	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
+    if (NWidth !== width || NHeight !== height || NClassName !== className) return true;
+    return false;
+  }
+  componentWillUnmount() {
+    this.keyboard('unbuild');
+    if (this.timeoutInit) {
+	    this.timeoutInit = null;
+      clearTimeout(this.timeoutInit);
+    }
+  }
+	/**
+	 * 初始化
+	 * @returns {*}
+	 */
+  init = () => {
+    try {
+	    const that = this;
+	    const role = this.role;
+      const svg = this.svg = Snap(this.svgWrap);
+			// ppt层
+      this.PPTLayer = createPPTLayer(role, {}, svg);
+			// 白板层
+	    const { clientWidth, clientHeight } = svg.node;
+      this.whiteBoardLayer = createWhiteBoardLayer(role, {
+        width: clientWidth,
+        height: clientHeight,
+      }, svg, {
+	      onDrawChange(items) {
+		      const { onDrawChange } = that.props;
+		      if (typeof onDrawChange === 'function') {
+			      onDrawChange(items);
+		      }
+	      },
+	      onDelete: (item) => {
+		      const { onDelete } = that.props;
+		      if (typeof onDelete === 'function') {
+			      onDelete(item);
+		      }
+	      },
+      });
+			// 白板工具层
+      this.wBToolsLayer = createWBToolsLayer(role, {
+        x: 0,
+	      y: 0,
+      }, svg, {
+	      onSelect: (tool) => {
+		      const { onWbToolsClick } = that.props;
+		      whiteBoardLayer.handleSetTools(tool);
+		      if (typeof onWbToolsClick === 'function') {
+			      onWbToolsClick(tool);
+		      }
+	      },
+	      onDelete: () => {
+		      const { whiteBoardLayer } = that;
+		      if (whiteBoardLayer) {
+			      if (whiteBoardLayer.getIsSelect()) {
+				      whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+			      }
+		      }
+	      },
+	      onDrag(transform) {
+		      const { onWbToolsDrag } = that.props;
+		      if (typeof onWbToolsDrag === 'function') {
+			      onWbToolsDrag(transform);
+		      }
+	      },
+      });
+			// 鼠标层
+      this.mouseLayer = createMouseLayer(role, {
+	      class: `mouse-${role}`,
+      }, svg);
+	    this.keyboard('bind');
+			// 初始画笔items
+      this.initDraw();
+      this.initMouse();
+      this.initWBtools();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  initDraw = () => {
+    if (this.whiteBoardLayer) {
+      const { items = [] } = this.props;
+      const { handleDraw } = this.whiteBoardLayer;
+      for (let i = 0; i < items.length; i += 1) {
+        const newItem = handleDraw(items[i], true);
+        this.historyItems.push(newItem);
+        this.PrevItems.push(items[i]);
+      }
+    }
+  };
+  initMouse = () => {
+    if (this.mouseLayer) {
+      const { mouseInfo = {} } = this.props;
+      const { handleSetPosition } = this.mouseLayer;
+      handleSetPosition({
+        x: mouseInfo.x || -1000,
+        y: mouseInfo.y || -1000,
+      });
+    }
+  };
+  initWBtools = () => {
+    if (this.wBToolsLayer) {
+      const { wBToolsInfo = {} } = this.props;
+      const { handleSetPosition, handleToolsChange } = this.wBToolsLayer;
+      if (wBToolsInfo.transform) {
+        handleSetPosition(wBToolsInfo.transform);
+      }
+      if (wBToolsInfo.tool) {
+        handleToolsChange(wBToolsInfo.tool);
+      }
+    }
+  };
+	/**
+	 * 快捷键
+	 * @param type 绑定事件 'bind' || 'unbild'
+	 */
+  keyboard = (type) => {
+    const that = this;
+    const { whiteBoardLayer } = this;
+    const { whiteBoardGroup } = this.groupItems;
+    if (type === 'bind') {
+			// 绑定鼠标事件
+      this.svg.mousemove((e) => {
+        const { onMouseChange } = this.props;
+        const { handleSetPosition } = this.mouseLayer;
+        handleSetPosition({ x: e.offsetX, y: e.offsetY }, onMouseChange);
+      });
+      Mousetrap.bind('backspace', () => {
+        if (whiteBoardLayer.getIsSelect()) {
+          whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+        }
+      }, 'keydown');
+      Mousetrap.bind('shift+backspace', () => {
+        whiteBoardLayer.handleDelete();
+      }, 'keydown');
+      Mousetrap.bind('space', () => {
+        whiteBoardLayer.handleSelect(true);
+      }, 'keydown');
+      Mousetrap.bind('space', () => {
+        whiteBoardLayer.handleSelect(false);
+      }, 'keyup');
+    }
+    if (type === 'unbuild') {
+      Mousetrap.unbind('backspace');
+      Mousetrap.unbind('shift+backspace');
+      Mousetrap.unbind('space');
+      window.removeEventListener('resize');
+      whiteBoardGroup.unmousedown();
+      whiteBoardGroup.unmousemove();
+      whiteBoardGroup.unmouseup();
+    }
+  };
+  render() {
+    const { className, width = 500, height = 500 } = this.props;
+    const styles = {
+      userSelect: 'none',
+      position: 'relative',
+	    cursor: `url(${require('../assets/bitbug_favicon.ico')}), default`,
+    };
+    return (
+      <svg
+	      ref={e => this.svgWrap = e}
+        style={styles}
+        width={width}
+        height={height}
+        className={classNames(
+					'SvgEdit',
+					'Broadcaster',
+					className,
+				)}
+      />
+    );
+  }
+}
+
+Broadcaster.propTypes = {
+  role: PropTypes.string,
+  className: PropTypes.string,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  items: PropTypes.array,
+  selectItem: PropTypes.object,
+  mouseInfo: PropTypes.object,
+  wBToolsInfo: PropTypes.object,
+  onMouseChange: PropTypes.func,
+  onDrawChange: PropTypes.func,
+  onDelete: PropTypes.func,
+  onWbToolsClick: PropTypes.func,
+  onWbToolsDrag: PropTypes.func,
+};
+
+export default Broadcaster;

@@ -8,30 +8,34 @@ const mouseStyle = {
   circle: require('../../assets/icon-circle.svg'),
   select: require('../../assets/icon-select.svg'),
   drag: require('../../assets/icon-drag.svg'),
-  color: require('../../assets/icon-color.svg'),
+	color: require('../../assets/icon-color.svg'),
+	clear: require('../../assets/icon-clear.svg'),
 };
 
-export default ({ role = 'Broadcaster', onDrag, handleSelect, className = '', x = 0, y = 0 }, target) => {
+export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onDrag, onSelect, onDelete }) => {
   const state = {
     isDrag: false,
   };
+	let origTransform;
   const group = target.group({
     class: classNames('wBToolsLayer', className),
-    width: 150,
+    width: 355,
     height: 50,
     transform: `matrix(1,0,0,1,${x},${y})`,
   });
   if (role === 'Broadcaster') {
-    let origTransform;
     group.drag(function (dx, dy) {
       if (!state.isDrag) return;
-      const transform = origTransform + (origTransform ? 'T' : 't') + [dx, dy];
+      const { width:Tw, height: tH, x, y } = this.attr();
+      const { width, height } = target.attr();
+	    let _dx = dx;
+	    let _dy = dy;
+      const transform = origTransform + (origTransform ? 'T' : 't') + [_dx, _dy];
       this.attr({
         transform,
       });
       if (typeof onDrag === 'function') {
         const t = this.transform().local;
-        console.log(t);
         onDrag(t);
       }
     }, function () {
@@ -92,9 +96,27 @@ export default ({ role = 'Broadcaster', onDrag, handleSelect, className = '', x 
   }).click(function() {
 
   });
+	const clear = target.group(
+		target.rect(270, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
+		target.image(mouseStyle.clear, 280, 10, 25, 25),
+	).attr({
+		__TYPE__: 'clear',
+		class: classNames('mouse', 'wbTool', 'clear', className),
+	}).mousedown(function() {
+		this.select('.whiteBoardBG').attr({
+			fill: selectFill,
+		});
+		if (typeof onDelete === 'function') {
+			onDelete();
+		}
+	}).mouseup(function () {
+		this.select('.whiteBoardBG').attr({
+			fill,
+		});
+	});
   const drag = target.group(
-    target.rect(270, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.drag, 280, 10, 25, 25),
+    target.rect(315, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
+    target.image(mouseStyle.drag, 325, 10, 25, 25),
   ).mousedown(function() {
       state.isDrag = true;
       this.select('.whiteBoardBG').attr({
@@ -106,9 +128,24 @@ export default ({ role = 'Broadcaster', onDrag, handleSelect, className = '', x 
         fill,
       });
     });
-  group.add(bg, pen, text, rect, circle, selectI, color, drag);
+  group.add(bg, pen, text, rect, circle, selectI, color, clear, drag);
   return {
-    group,
+	  layer: group,
+    handleReset() {
+	    origTransform = '';
+	    if (role !== 'Broadcaster') return;
+	    group.attr({
+		    transform: '',
+      })
+	    group.selectAll('.wbTool .whiteBoardBG').attr({
+		    fill,
+	    });
+	    this.select('.whiteBoardBG .path').attr({
+		    fill: selectFill,
+	    });
+	    const { __TYPE__ } = this.attr();
+	    onSelect && onSelect('path');
+    },
     handleSetPosition(transform) {
       group.attr({
         transform,
@@ -135,6 +172,6 @@ export default ({ role = 'Broadcaster', onDrag, handleSelect, className = '', x 
       fill: selectFill,
     });
     const { __TYPE__ } = this.attr();
-    handleSelect && handleSelect(__TYPE__);
+    onSelect && onSelect(__TYPE__);
   }
 };

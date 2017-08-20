@@ -8,7 +8,8 @@ export default (attrData = {}, target, isInit) => {
   });
   group.attr({
     textPathAttr,
-    class: classNames('textItem'),
+	  __TYPE__: 'text',
+    class: classNames('textItem', __ID__ || group.id),
     __ID__: __ID__ || group.id,
   });
   let textAttr = {};
@@ -17,7 +18,7 @@ export default (attrData = {}, target, isInit) => {
   }
   const textPath = target.paper.text(x, y, `${ text || __text__ || '' } |`);
   textPath.attr({
-    class: classNames('textPape'),
+    class: classNames('text'),
     fill,
     'font-size': fontSize,
     __ID__: textPath.id,

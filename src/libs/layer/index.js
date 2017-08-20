@@ -3,9 +3,8 @@ import PPTLayer from './PPTLayer';
 import whiteBoardLayer from './whiteBoardLayer';
 import wBToolsLayer from './wBToolsLayer';
 
-export default {
-  createMouseLayer: mouseLayer,
-  createPPTLayer: PPTLayer,
-  createWBToolsLayer: wBToolsLayer,
-  createWhiteBoardLayer: whiteBoardLayer,
-};
+export const createMouseLayer = mouseLayer;
+export const createPPTLayer = PPTLayer;
+export const createWBToolsLayer = wBToolsLayer;
+export const createWhiteBoardLayer = whiteBoardLayer;
+

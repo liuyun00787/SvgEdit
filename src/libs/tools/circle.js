@@ -8,8 +8,9 @@ export default (attrData = {}, target, isInit) => {
     const { __ID__, onChange, className = '', x = 0, y = 0, strokeWidth = 5, stroke = '#f00', fill = 'rgba(0,0,0,0)' } = attrData;
     path = target.paper.ellipse(x, y, 1, 1);
     path.attr({
+      __TYPE__: 'circle',
       __ID__: __ID__ || path.id,
-      class: classNames('circleItem', className),
+      class: classNames('circleItem', __ID__ || path.id, className),
       stroke,
       strokeWidth,
       fill,

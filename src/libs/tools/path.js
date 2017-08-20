@@ -7,12 +7,15 @@ export default (attrData = {}, target, isInit) => {
   } else {
     const { __ID__, className = '', x = 0, y = 0, strokeWidth = 5, stroke = '#f00', fill = 'rgba(0,0,0,0)' } = attrData;
     path = target.paper.path({
-      class: classNames('pathItem', className),
       d: `M${x},${y}`,
       stroke,
       strokeWidth,
       fill,
     });
+    path.attr({
+	    __TYPE__: 'path',
+	    class: classNames('pathItem', __ID__ || path.id, className),
+    })
   }
   if (attrData.__ID__) {
     path.id = attrData.__ID__;

@@ -8,8 +8,9 @@ export default (attrData = {}, target, isInit) => {
     const { __ID__, onChange, className = '', x = 0, y = 0, stroke = '#f00', strokeWidth = 5, fill = 'rgba(0,0,0,0)' } = attrData;
     path = target.paper.rect(x, y, 1, 1);
     path.attr({
+	    __TYPE__: 'rect',
       __ID__: __ID__ || path.id,
-      class: classNames('rectItem', className),
+      class: classNames('rectItem', __ID__ || path.id, className),
       stroke,
       strokeWidth,
       fill,
