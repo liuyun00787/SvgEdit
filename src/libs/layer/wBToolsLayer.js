@@ -36,7 +36,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
       });
       if (typeof onDrag === 'function') {
         const t = this.transform().local;
-        onDrag(t);
+        onDrag(group.attr());
       }
     }, function () {
       if (!state.isDrag) return;
@@ -171,7 +171,9 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
     this.select('.whiteBoardBG').attr({
       fill: selectFill,
     });
-    const { __TYPE__ } = this.attr();
-    onSelect && onSelect(__TYPE__);
+    const attr = this.attr();
+    if (typeof onSelect === 'function') {
+	    onSelect(attr.__TYPE__, attr);
+    }
   }
 };

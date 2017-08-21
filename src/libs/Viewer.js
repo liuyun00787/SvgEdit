@@ -164,8 +164,8 @@ class Viewer extends React.Component {
       const { mouseInfo = {} } = this.props;
       const { handleSetPosition } = this.mouseLayer;
       handleSetPosition({
-        x: mouseInfo.x || 0,
-        y: mouseInfo.y || 0,
+        x: mouseInfo.x || -1000,
+        y: mouseInfo.y || -1000,
       });
     }
   };

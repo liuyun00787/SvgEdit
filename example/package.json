@@ -2,7 +2,7 @@
   "version": "0.0.18",
   "private": true,
   "scripts": {
-    "start": "roadhog server --BUILD_ENV=develop",
+    "start": "PORT=3000 roadhog server --BUILD_ENV=develop",
     "build": "roadhog build --BUILD_ENV=production",
     "lint": "eslint --ext .js test",
     "precommit": "npm run lint"

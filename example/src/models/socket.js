@@ -78,10 +78,10 @@ export default {
       socket.emit('init', JSON.stringify({ _EVENT_: 'initReply' }));
       window.IO = socket;
     },
-    *wbToolsChange({ transform, tool }, { put }) {
+    *wbToolsChange({ mouseInfo }, { put }) {
       try {
-        yield put({ type: 'setWbTools', wBToolsInfo: { transform, tool } });
-        socket.emit('wbToolsChange', JSON.stringify({ data: { transform, tool } }));
+        yield put({ type: 'setWbTools', wBToolsInfo: mouseInfo });
+        socket.emit('wbToolsChange', JSON.stringify({ data: mouseInfo }));
       } catch (e) {
         console.log(e)
       }

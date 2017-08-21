@@ -241,6 +241,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
       if (item.__TYPE__ === 'circle') {
         path = createCircle(item, target, isInit);
       }
+      console.log(item, path);
       path.group.click(function() {
         if (state.isDraw) {
           return;

@@ -79,12 +79,12 @@ class Broadcaster extends React.Component {
         x: 0,
 	      y: 0,
       }, svg, {
-	      onSelect: (tool) => {
+	      onSelect: (tool, info) => {
 		      const { onWbToolsClick } = that.props;
 		      const { whiteBoardLayer } = that;
 		      whiteBoardLayer.handleSetTools(tool);
 		      if (typeof onWbToolsClick === 'function') {
-			      onWbToolsClick(tool);
+			      onWbToolsClick(tool, info);
 		      }
 	      },
 	      onDelete: () => {
@@ -95,10 +95,10 @@ class Broadcaster extends React.Component {
 			      }
 		      }
 	      },
-	      onDrag(transform) {
+	      onDrag(info) {
 		      const { onWbToolsDrag } = that.props;
 		      if (typeof onWbToolsDrag === 'function') {
-			      onWbToolsDrag(transform);
+			      onWbToolsDrag(info);
 		      }
 	      },
       });

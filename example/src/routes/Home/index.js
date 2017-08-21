@@ -42,11 +42,11 @@ class _TEST__ extends React.Component {
         selectItem={selectItem}
         mouseInfo={mouseInfo}
         wBToolsInfo={wBToolsInfo}
-        onWbToolsClick={(tool) => {
-          dispatch({ type: 'socket/wbToolsChange', tool });
+        onWbToolsClick={(tool, mouseInfo) => {
+          dispatch({ type: 'socket/wbToolsChange', mouseInfo });
         }}
-        onWbToolsDrag={(transform) => {
-          dispatch({ type: 'socket/wbToolsChange', transform });
+        onWbToolsDrag={(mouseInfo) => {
+          dispatch({ type: 'socket/wbToolsChange', mouseInfo });
         }}
         onMouseChange={(mouse) => {
           dispatch({ type: 'socket/mouseMove', mouseInfo: mouse });
@@ -76,7 +76,6 @@ class _TEST__ extends React.Component {
   };
   render() {
     const { socket } = this.props;
-    const { fetching } = socket;
     return (
       <div ref={wrap => this.wrap = wrap} className={styles.__TEST__}>
         <div style={{ width: this.state.width, height: '100%', background: '#eee', float: 'left' }} className="">
