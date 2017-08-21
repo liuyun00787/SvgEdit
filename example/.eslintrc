@@ -1,6 +1,11 @@
 {
   "parser": "babel-eslint",
   "extends": "airbnb",
+  "globals" : {
+    "document": false,
+    "window": false,
+    "__ENV__": false
+  },
   "rules": {
     "generator-star-spacing": [0],
     "consistent-return": [0],
