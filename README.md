@@ -1,16 +1,17 @@
 SVG编辑器。
 
 ## 何时使用
-
+```
+    npm install -S svgreact 
+```
 ## API
-
-### Broadcaster && Viewer 共同API
-
 ```jsx
 
 import { Broadcaster, Viewer } from svgreact;
 
 ```
+
+### Broadcaster && Viewer 共同API
 
 | 参数       | 说明           | 类型             | 默认值       |
 |------------|----------------|------------------|--------------|
