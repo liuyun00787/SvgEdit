@@ -31,4 +31,18 @@ import { Broadcaster, Viewer } from svgreact;
 | onDrawChange    | 笔画回调 | function(obj`配置信息`)          | 无           |
 | onDeleteChange    | 清除回调 | function(obj`配置信息`)          | 无           |
 
+## 开发
+
+1. clone 代码
+```
+git clone https://github.com/hexiao-o/SvgEdit.git
+```
+2. 安装依赖和启动服务
+```
+cd SvgEdit && npm install && cd example && npm install && npm run start
+```
+3. 打开网页
+```
+open http://localhost:3000
+```
 
