@@ -26,9 +26,9 @@ import { Broadcaster, Viewer } from svgreact;
 ### Broadcaster 私有API
 | 参数       | 说明           | 类型             | 默认值       |
 |------------|----------------|------------------|--------------|
-| onWbToolsChange    | 白板工具回调 | function(obj|配置信息)          | 无           |
-| onMouseChange    | 鼠标回调 | function(obj|配置信息)          | 无           |
-| onDrawChange    | 笔画回调 | function(obj|配置信息)          | 无           |
-| onDeleteChange    | 清除回调 | function(obj|配置信息)          | 无           |
+| onWbToolsChange    | 白板工具回调 | function(obj`配置信息`)          | 无           |
+| onMouseChange    | 鼠标回调 | function(obj`配置信息`)          | 无           |
+| onDrawChange    | 笔画回调 | function(obj`配置信息`)          | 无           |
+| onDeleteChange    | 清除回调 | function(obj`配置信息`)          | 无           |
 
 
