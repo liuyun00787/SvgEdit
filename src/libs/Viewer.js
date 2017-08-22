@@ -23,6 +23,7 @@ class Viewer extends React.Component {
   componentWillReceiveProps(nextProps) {
 	  const { width, height, mouseInfo, items, wBToolsInfo } = this.props;
 	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {} } = nextProps;
+	  console.log(NItems, 111111);
 	  if (NWidth !== width || NHeight !== height) {
 		  if (this.whiteBoardLayer) {
 			  this.whiteBoardLayer.handleSetWH({

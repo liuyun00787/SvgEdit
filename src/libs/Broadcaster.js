@@ -64,13 +64,13 @@ class Broadcaster extends React.Component {
 	      onDrawChange(items) {
 		      const { onDrawChange } = that.props;
 		      if (typeof onDrawChange === 'function') {
-			      onDrawChange(items);
+			      onDrawChange(items.attr());
 		      }
 	      },
-	      onDelete: (item) => {
-		      const { onDelete } = that.props;
-		      if (typeof onDelete === 'function') {
-			      onDelete(item);
+	      onDeleteChange: (item) => {
+		      const { onDeleteChange } = that.props;
+		      if (typeof onDeleteChange === 'function') {
+			      onDeleteChange(item);
 		      }
 	      },
       });
@@ -80,14 +80,14 @@ class Broadcaster extends React.Component {
 	      y: 0,
       }, svg, {
 	      onSelect: (tool, info) => {
-		      const { onWbToolsClick } = that.props;
+		      const { onWbToolsChange } = that.props;
 		      const { whiteBoardLayer } = that;
 		      whiteBoardLayer.handleSetTools(tool);
-		      if (typeof onWbToolsClick === 'function') {
-			      onWbToolsClick(tool, info);
+		      if (typeof onWbToolsChange === 'function') {
+			      onWbToolsChange(info);
 		      }
 	      },
-	      onDelete: () => {
+	      onDeleteChange: () => {
 		      const { whiteBoardLayer } = that;
 		      if (whiteBoardLayer) {
 			      if (whiteBoardLayer.getIsSelect()) {
@@ -96,9 +96,9 @@ class Broadcaster extends React.Component {
 		      }
 	      },
 	      onDrag(info) {
-		      const { onWbToolsDrag } = that.props;
-		      if (typeof onWbToolsDrag === 'function') {
-			      onWbToolsDrag(info);
+		      const { onWbToolsChange } = that.props;
+		      if (typeof onWbToolsChange === 'function') {
+			      onWbToolsChange(info);
 		      }
 	      },
       });
@@ -222,9 +222,8 @@ Broadcaster.propTypes = {
   wBToolsInfo: PropTypes.object,
   onMouseChange: PropTypes.func,
   onDrawChange: PropTypes.func,
-  onDelete: PropTypes.func,
-  onWbToolsClick: PropTypes.func,
-  onWbToolsDrag: PropTypes.func,
+	onDeleteChange: PropTypes.func,
+	onWbToolsChange: PropTypes.func,
 };
 
 export default Broadcaster;

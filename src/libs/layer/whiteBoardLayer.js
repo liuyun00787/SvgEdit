@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { createPath, createText, createRect, createCircle } from '../tools';
 
-export default (role = 'Broadcaster', { className = '', width = 0, height = 0, items = [] }, target, { onDelete, onDrawChange }) => {
+export default (role = 'Broadcaster', { className = '', width = 0, height = 0, items = [] }, target, { onDeleteChange, onDrawChange }) => {
   const state = {
     downX: 0,
     downY: 0,
@@ -197,8 +197,8 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
         state.selectItem = null;
         wbItemWrap.handleHide(path);
       }
-      if (typeof onDelete === 'function') {
-	      onDelete(path);
+      if (typeof onDeleteChange === 'function') {
+	      onDeleteChange(path);
       }
       state.isSelect = false;
     },
@@ -241,7 +241,6 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
       if (item.__TYPE__ === 'circle') {
         path = createCircle(item, target, isInit);
       }
-      console.log(item, path);
       path.group.click(function() {
         if (state.isDraw) {
           return;

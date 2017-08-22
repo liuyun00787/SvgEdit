@@ -12,7 +12,7 @@ const mouseStyle = {
 	clear: require('../../assets/icon-clear.svg'),
 };
 
-export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onDrag, onSelect, onDelete }) => {
+export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onDrag, onSelect, onDeleteChange }) => {
   const state = {
     isDrag: false,
   };
@@ -42,7 +42,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
       if (!state.isDrag) return;
       origTransform = this.transform().local;
       if (typeof onDrag === 'function') {
-        onDrag(origTransform);
+        onDrag(group.attr());
       }
     });
   }
@@ -106,8 +106,8 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 		this.select('.whiteBoardBG').attr({
 			fill: selectFill,
 		});
-		if (typeof onDelete === 'function') {
-			onDelete();
+		if (typeof onDeleteChange === 'function') {
+			onDeleteChange();
 		}
 	}).mouseup(function () {
 		this.select('.whiteBoardBG').attr({
@@ -144,7 +144,10 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 		    fill: selectFill,
 	    });
 	    const { __TYPE__ } = this.attr();
-	    onSelect && onSelect('path');
+	    const attr = group.attr();
+	    if (typeof onSelect === 'function') {
+		    onSelect(attr.__TYPE__, attr);
+	    }
     },
     handleSetPosition(transform) {
       group.attr({
