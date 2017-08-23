@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
+import is from 'is_js';
 import classNames from 'classnames';
-import Mousetrap from 'mousetrap';
 import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from './layer';
 
@@ -10,7 +10,6 @@ class Broadcaster extends React.Component {
 	  this.role = 'Broadcaster';
     this.state = {};
     this.historyItems = [];
-    this.groupItems = {};
     this.PrevItems = [];
     this.selectItem = null;
   }
@@ -34,7 +33,9 @@ class Broadcaster extends React.Component {
   shouldComponentUpdate(nextProps) {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
-    if (NWidth !== width || NHeight !== height || NClassName !== className) return true;
+    if (NWidth !== width || NHeight !== height || NClassName !== className) {
+	    return true;
+    }
     return false;
   }
   componentWillUnmount() {
@@ -52,7 +53,7 @@ class Broadcaster extends React.Component {
     try {
 	    const that = this;
 	    const role = this.role;
-      const svg = this.svg = Snap(this.svgWrap);
+      const svg = this.svg = new Snap(this.svgWrap);
 			// ppt层
       this.PPTLayer = createPPTLayer(role, {}, svg);
 			// 白板层
@@ -153,39 +154,18 @@ class Broadcaster extends React.Component {
 	 * @param type 绑定事件 'bind' || 'unbild'
 	 */
   keyboard = (type) => {
-    const that = this;
-    const { whiteBoardLayer } = this;
-    const { whiteBoardGroup } = this.groupItems;
     if (type === 'bind') {
 			// 绑定鼠标事件
       this.svg.mousemove((e) => {
         const { onMouseChange } = this.props;
-        const { handleSetPosition } = this.mouseLayer;
-        handleSetPosition({ x: e.offsetX, y: e.offsetY }, onMouseChange);
-      });
-      Mousetrap.bind('backspace', () => {
-        if (whiteBoardLayer.getIsSelect()) {
-          whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+        if (this.mouseLayer) {
+	        const { handleSetPosition } = this.mouseLayer;
+	        handleSetPosition({ x: e.offsetX, y: e.offsetY }, onMouseChange);
         }
-      }, 'keydown');
-      Mousetrap.bind('shift+backspace', () => {
-        whiteBoardLayer.handleDelete();
-      }, 'keydown');
-      Mousetrap.bind('space', () => {
-        whiteBoardLayer.handleSelect(true);
-      }, 'keydown');
-      Mousetrap.bind('space', () => {
-        whiteBoardLayer.handleSelect(false);
-      }, 'keyup');
+      });
     }
     if (type === 'unbuild') {
-      Mousetrap.unbind('backspace');
-      Mousetrap.unbind('shift+backspace');
-      Mousetrap.unbind('space');
-      window.removeEventListener('resize');
-      whiteBoardGroup.unmousedown();
-      whiteBoardGroup.unmousemove();
-      whiteBoardGroup.unmouseup();
+
     }
   };
   render() {

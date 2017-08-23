@@ -17,7 +17,7 @@ class _TEST__ extends React.Component {
     if (this.wrap) {
       setTimeout(() => {
         this.setState({
-          width: this.wrap.offsetWidth/2,
+          width: this.wrap.offsetWidth/3,
           height: this.wrap.offsetHeight,
         });
       }, 500);
@@ -25,28 +25,26 @@ class _TEST__ extends React.Component {
     window.addEventListener('resize', () => {
       if (this.wrap) {
         this.setState({
-          width: this.wrap.offsetWidth/2,
+          width: this.wrap.offsetWidth/3,
           height: this.wrap.offsetHeight,
         });
       }
     });
   }
-  renderB = () => {
+  renderB = (className) => {
     const { dispatch, socket } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo } = socket;
     return (
       <Broadcaster
+        className={className}
         items={drawItems || []}
         width={this.state.width}
         height={this.state.height}
         selectItem={selectItem}
         mouseInfo={mouseInfo}
         wBToolsInfo={wBToolsInfo}
-        onWbToolsClick={(tool, mouseInfo) => {
-          dispatch({ type: 'socket/wbToolsChange', mouseInfo });
-        }}
-        onWbToolsDrag={(mouseInfo) => {
-          dispatch({ type: 'socket/wbToolsChange', mouseInfo });
+        onWbToolsChange={(wBToolsInfo) => {
+          dispatch({ type: 'socket/wbToolsChange', wBToolsInfo });
         }}
         onMouseChange={(mouse) => {
           dispatch({ type: 'socket/mouseMove', mouseInfo: mouse });
@@ -79,15 +77,21 @@ class _TEST__ extends React.Component {
     return (
       <div ref={wrap => this.wrap = wrap} className={styles.__TEST__}>
         <div style={{ width: this.state.width, height: '100%', background: '#eee', float: 'left' }} className="">
-          <h1 className={styles.title}>Broadcaster</h1>
+          <h1 className={styles.title}>Broadcaster-1</h1>
           <div className="">
-            {this.renderB()}
+            {this.renderB('Broadcaster-1')}
           </div>
         </div>
-        <div style={{ width: this.state.width, height: '100%', float: 'right' }} className="">
+        <div style={{ width: this.state.width, height: '100%', float: 'left' }} className="">
           <h1 className={styles.title}>Viewer</h1>
           <div className="">
             {this.renderV()}
+          </div>
+        </div>
+        <div style={{ width: this.state.width, height: '100%', background: '#eee', float: 'left' }} className="">
+          <h1 className={styles.title}>Broadcaster-2</h1>
+          <div className="">
+            {this.renderB('Broadcaster-2')}
           </div>
         </div>
       </div>

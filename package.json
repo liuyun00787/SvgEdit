@@ -15,6 +15,7 @@
     "classnames": "^2.2.5",
     "immutable": "^3.8.1",
     "imports-loader": "^0.7.1",
+    "is_js": "^0.9.0",
     "mousetrap": "^1.6.1",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",

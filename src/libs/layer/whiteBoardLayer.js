@@ -1,6 +1,13 @@
 import classNames from 'classnames';
 import { createPath, createText, createRect, createCircle } from '../tools';
 
+Snap.plugin((Snap, Element, Paper, glob) => {
+	const elproto = Element.prototype;
+	elproto.wBtoFront = function (target) {
+		this.paper.select('.whiteBoardLayer').add(this);
+	};
+});
+
 export default (role = 'Broadcaster', { className = '', width = 0, height = 0, items = [] }, target, { onDeleteChange, onDrawChange }) => {
   const state = {
     downX: 0,
@@ -13,16 +20,8 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
   const group = target.group({
     class: classNames('whiteBoardLayer', className),
   });
-  Snap.plugin((Snap, Element, Paper, glob) => {
-    const elproto = Element.prototype;
-    elproto.wBtoFront = function () {
-      group.add(this);
-    };
-    elproto.toBack = function () {
-      this.appendTo(this.paper);
-    };
-  });
-  const wbItemWrap = createWbItemWrap({ onDrawChange, role }, target);
+
+  const wbItemWrap = new CreateWbItemWrap({ onDrawChange, role }, target);
 
   const whiteBoardBG = target.rect(0, 0, 0, 0).attr({ class: 'whiteBoardBG', fill: '#ffff00', fillOpacity: 0 }).attr({
     width,
@@ -204,13 +203,8 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     },
     handleSelect: (isSelect = false) => {
       state.isDraw = !isSelect;
-      // state.isSelect = isSelect;
     },
     handleSetTools: (tools = 'path') => {
-      // tools: 'path',
-      // tools: 'text',
-      // tools: 'rect',
-      // tools: 'circle',
       if (tools === 'select') {
         state.isDraw = false;
         state.isSelect = true;
@@ -247,6 +241,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
         };
         state.isDraw = false;
         state.isSelect = true;
+        console.log(this);
         wbItemWrap.handleShow(this, this.attr('__TYPE__') === 'text' ? () => path.handeFocus(this) : null);
         state.selectItem = this;
         if (this.attr('__TYPE__') === 'text') {
@@ -261,7 +256,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
 };
 
 
-function createWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', width = 0, height = 0 }, target) {
+function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', width = 0, height = 0 }, target) {
   const state = {
     selectItem: '',
     hoverIn: false,
@@ -362,7 +357,6 @@ function createWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
   return {
 	  group,
     handleShow: (path, callback) => {
-      if (role !== 'Broadcaster') return;
       const { x, y, width, height } = path.getBBox();
       state.selectItem = path;
       group.attr({
@@ -376,7 +370,7 @@ function createWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
       group
         .data('origTransform', path.transform().local)
         .attr({ x, y, width, height })
-        .wBtoFront()
+        .wBtoFront(group);
       square2.attr({
         x: x - 10,
         y: y - 10,

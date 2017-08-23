@@ -35,7 +35,6 @@ export default {
           } else {
             state.drawItems.splice(index, 1);
           }
-          console.log(index, 2222, state.drawItems, drawItem)
         }
       } else {
         const index = _.findIndex(state.drawItems, _.matchesProperty('__ID__', drawItem.__ID__));
@@ -78,10 +77,10 @@ export default {
       socket.emit('init', JSON.stringify({ _EVENT_: 'initReply' }));
       window.IO = socket;
     },
-    *wbToolsChange({ mouseInfo }, { put }) {
+    *wbToolsChange({ wBToolsInfo }, { put }) {
       try {
-        yield put({ type: 'setWbTools', wBToolsInfo: mouseInfo });
-        socket.emit('wbToolsChange', JSON.stringify({ data: mouseInfo }));
+        yield put({ type: 'setWbTools', wBToolsInfo });
+        socket.emit('wbToolsChange', JSON.stringify({ data: wBToolsInfo }));
       } catch (e) {
         console.log(e)
       }
@@ -96,11 +95,11 @@ export default {
     },
     *drawChange({ drawItem, clear }, { put }) {
       try {
-        yield put({ type: 'setDrawItems', drawItem: drawItem.attr(), clear });
+        yield put({ type: 'setDrawItems', drawItem, clear });
         if (clear) {
           socket.emit('drawChange', JSON.stringify({ data: { clear } }));
         } else {
-          const req = drawItem.attr();
+          const req = drawItem;
           socket.emit('drawChange', JSON.stringify({ data: { item: req, clear } }));
         }
       } catch (e) {

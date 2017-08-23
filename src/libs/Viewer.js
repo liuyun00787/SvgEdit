@@ -23,7 +23,6 @@ class Viewer extends React.Component {
   componentWillReceiveProps(nextProps) {
 	  const { width, height, mouseInfo, items, wBToolsInfo } = this.props;
 	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {} } = nextProps;
-	  console.log(NItems, 111111);
 	  if (NWidth !== width || NHeight !== height) {
 		  if (this.whiteBoardLayer) {
 			  this.whiteBoardLayer.handleSetWH({
@@ -93,7 +92,10 @@ class Viewer extends React.Component {
   shouldComponentUpdate(nextProps) {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
-	  if (NWidth !== width || NHeight !== height || NClassName !== className) return true;
+	  if (NWidth !== width || NHeight !== height || NClassName !== className){
+		  console.log(NWidth, width, NHeight, height, NClassName, className);
+		  return true;
+	  }
 	  return false;
   }
   componentWillUnmount() {
@@ -133,10 +135,10 @@ class Viewer extends React.Component {
 		    },
 	    });
 			// 白板工具层
-	    this.wBToolsLayer = createWBToolsLayer(role, {
-		    x: 0,
-		    y: 0,
-	    }, svg, {});
+			// this.wBToolsLayer = createWBToolsLayer(role, {
+		   //  x: 0,
+		   //  y: 0,
+			// }, svg, {});
 	    // 鼠标层
 	    this.mouseLayer = createMouseLayer(role, {
 		    class: `mouse-${role}`,
