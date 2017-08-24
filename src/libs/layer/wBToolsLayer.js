@@ -102,9 +102,22 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 	function createSize(sizes) {
 		for (let i = 0; i < sizes.length; i += 1) {
 			const color = target.circle((245 + (i * 30)), 70, (i * 2) + 5)
-				.attr({ class: 'seting', __SIZE__: sizes[i], fill: '#000', fillOpacity: 1 })
+				.attr({
+					class: 'seting size-item',
+					__SIZE__: sizes[i],
+					stroke: '#000',
+					strokeWidth: 2,
+					fill: '#000',
+					fillOpacity: 1,
+				})
 				.click(function() {
 					const attr = this.attr();
+					seting.selectAll('.size-item').attr({
+						stroke: '#000',
+					});
+					this.attr({
+						stroke: '#0ff',
+					});
 					state.config = {
 						...state.config,
 						strokeWidth: attr.__SIZE__,
@@ -118,9 +131,20 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 	function createColor(colors) {
 		for (let i = 0; i < colors.length; i += 1) {
 			const color = target.circle((245 + (i * 30)), 100, 10)
-				.attr({ class: 'seting', __COLOR__: colors[i], fill: colors[i], fillOpacity: 1 })
+				.attr({
+					class: 'seting color-item',
+					stroke: '#000',
+					strokeWidth: 2,
+					__COLOR__: colors[i], fill: colors[i], fillOpacity: 1
+				})
 				.click(function() {
 					const attr = this.attr();
+					seting.selectAll('.color-item').attr({
+						stroke: '#000',
+					});
+					this.attr({
+						stroke: '#0ff',
+					});
 					state.config = {
 						...state.config,
 						stroke: attr.__COLOR__,
@@ -155,7 +179,13 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 		this.select('.whiteBoardBG').attr({
 			fill,
 		});
-	});
+	})
+		.dblclick(function () {
+			// 双击删全部
+			if (typeof onDeleteChange === 'function') {
+				onDeleteChange(true);
+			}
+		});
   const drag = target.group(
     target.rect(315, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
     target.image(mouseStyle.drag, 325, 10, 25, 25),

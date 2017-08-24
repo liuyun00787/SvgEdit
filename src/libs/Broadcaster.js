@@ -93,10 +93,12 @@ class Broadcaster extends React.Component {
 			      onWbToolsChange(info);
 		      }
 	      },
-	      onDeleteChange: () => {
+	      onDeleteChange: (clearAll) => {
 		      const { whiteBoardLayer } = that;
 		      if (whiteBoardLayer) {
-			      if (whiteBoardLayer.getIsSelect()) {
+		      	if (clearAll) {
+				      whiteBoardLayer.handleDelete();
+			      } else if (whiteBoardLayer.getIsSelect()) {
 				      whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
 			      }
 		      }
