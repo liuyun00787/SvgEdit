@@ -139,9 +139,13 @@ class Viewer extends React.Component {
 		   //  y: 0,
 			// }, svg, {});
 	    // 鼠标层
-	    this.mouseLayer = createMouseLayer(role, {
-		    class: `mouse-${role}`,
-	    }, svg);
+	    this.mouseLayer = createMouseLayer({
+		    role,
+		    attr: {
+			    class: `mouse-${role}`,
+		    },
+		    target: svg,
+	    });
 			// 初始画笔items
       this.initDraw();
       this.initMouse();

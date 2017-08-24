@@ -81,7 +81,6 @@ class Broadcaster extends React.Component {
 	      y: 0,
       }, svg, {
       	onColorChange: (config) => {
-      		console.log(config, 11111);
       		this.whiteBoardLayer.handleSetConfig(config);
 	      },
 	      onSelect: (info) => {
@@ -111,9 +110,13 @@ class Broadcaster extends React.Component {
 	      },
       });
 			// 鼠标层
-      this.mouseLayer = createMouseLayer(role, {
-	      class: `mouse-${role}`,
-      }, svg);
+      this.mouseLayer = createMouseLayer({
+	      role,
+	      attr: {
+		      class: `mouse-${role}`,
+	      },
+	      target: svg,
+      });
 	    this.keyboard('bind');
 			// 初始画笔items
       this.initDraw();

@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import { createPath, createText, createRect, createCircle } from '../tools';
 
-Snap.plugin((Snap, Element, Paper, glob) => {
-	const elproto = Element.prototype;
-	elproto.wBtoFront = function () {
-		this.paper.select('.whiteBoardLayer').add(this);
-	};
+Snap.plugin((Snap, Element) => {
+  const elproto = Element.prototype;
+  elproto.wBtoFront = function () {
+    this.paper.select('.whiteBoardLayer').add(this);
+  };
 });
 
-export default (role = 'Broadcaster', { className = '', width = 0, height = 0, items = [] }, target, { onDeleteChange, onDrawChange }) => {
+export default (role = 'Broadcaster', { className = '', width = 0, height = 0 }, target, { onDeleteChange, onDrawChange }) => {
   const state = {
     downX: 0,
     downY: 0,
@@ -22,7 +22,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     class: classNames('whiteBoardLayer', className),
   });
 
-  const wbItemWrap = new CreateWbItemWrap({ onDrawChange, role }, target);
+  const wbItemWrap = createWbItemWrap({ onDrawChange, role }, target, { onDrawChange });
 
   const whiteBoardBG = target.rect(0, 0, 0, 0).attr({ class: 'whiteBoardBG', fill: '#ffff00', fillOpacity: 0 }).attr({
     width,
@@ -60,7 +60,9 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     }
     if (tools === 'text') {
       pathLayer = createText({
-        text: '', x: e.offsetX, y: e.offsetY,
+        text: '',
+        x: e.offsetX,
+        y: e.offsetY,
         onChange: (path, text, cb) => {
           wbItemWrap.handleShow(path);
           if (typeof onDrawChange === 'function') {
@@ -72,7 +74,8 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     }
     if (tools === 'rect') {
       pathLayer = createRect({
-        x: e.offsetX, y: e.offsetY,
+        x: e.offsetX,
+        y: e.offsetY,
         onChange: (path) => {
           // wbItemWrap.handleShow(path);
         },
@@ -81,17 +84,18 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     }
     if (tools === 'circle') {
       pathLayer = createCircle({
-        x: e.offsetX, y: e.offsetY,
+        x: e.offsetX,
+        y: e.offsetY,
         onChange: (path) => {
           // wbItemWrap.handleShow(path);
         },
       }, target);
       drawPath = pathLayer.group;
     }
-    drawPath.click(function() {
+    drawPath.click(function () {
       if (state.isDraw) {
         return;
-      };
+      }
       if (this.attr('__TYPE__') === 'text') {
         pathLayer.handeFocus(this);
       }
@@ -220,14 +224,12 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
               group.select(`.${item.__ID__}`).remove();
             }
           });
-        } else {
-          if (state.isSelect) {
+        } else if (state.isSelect) {
 	          if (group.select(`.${path.__ID__}`)) {
 		          group.select(`.${path.__ID__}`).remove();
 	          }
-            state.selectItem = null;
-            wbItemWrap.handleHide(path);
-          }
+          state.selectItem = null;
+          wbItemWrap.handleHide(path);
         }
       } else {
         group.clear();
@@ -262,12 +264,12 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
         path = createPath(item, target, isInit);
       }
       if (item.__TYPE__ === 'text') {
-        item['onChange'] = (g, a, cb) => {
+        item.onChange = (g, a, cb) => {
           wbItemWrap.handleShow(g, cb);
           if (typeof onDrawChange === 'function') {
             onDrawChange(g);
           }
-        }
+        };
         path = createText(item, target, isInit);
         path.group.select('.text').attr(JSON.parse(item.textPathAttr || ''));
       }
@@ -277,10 +279,10 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
       if (item.__TYPE__ === 'circle') {
         path = createCircle(item, target, isInit);
       }
-      path.group.click(function() {
+      path.group.click(function () {
         if (state.isDraw) {
           return;
-        };
+        }
         state.isDraw = false;
         state.isSelect = true;
         console.log(this);
@@ -289,7 +291,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
         if (this.attr('__TYPE__') === 'text') {
           path.handeFocus(this);
         }
-      })
+      });
       group.add(path.group);
       state.selectItem = path.group;
       return path.group;
@@ -298,7 +300,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
 };
 
 
-function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', width = 0, height = 0 }, target) {
+function createWbItemWrap({ role = 'Broadcaster', className = '', width = 0, height = 0 }, target, { onDrawChange }) {
   const state = {
     selectItem: '',
     hoverIn: false,
@@ -335,7 +337,7 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
   const square2 = target.rect(0, 0, 0, 0).attr({ class: 'square2', fill: 'coral' });
   const setRectLT = target.rect(20, 20, 10, 10).attr({ class: 'square2', fill: 'red' })
     .hover(
-      function() {
+      function () {
         state.hoverIn = true;
         this.attr({
           fill: '#ff00ff',
@@ -350,7 +352,7 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
     );
   const setRectRT = target.rect(20, 20, 10, 10).attr({ class: 'square2', fill: 'red' })
     .hover(
-      function() {
+      function () {
         state.hoverIn = true;
         this.attr({
           fill: '#ff00ff',
@@ -362,10 +364,10 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
           fill: 'red',
         });
       },
-    )
+    );
   const setRectRB = target.rect(20, 20, 10, 10).attr({ class: 'square2', fill: 'red' })
     .hover(
-      function() {
+      function () {
         state.hoverIn = true;
         this.attr({
           fill: '#ff00ff',
@@ -380,7 +382,7 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
     );
   const setRectTB = target.rect(20, 20, 10, 10).attr({ class: 'square2', fill: 'red' })
     .hover(
-      function() {
+      function () {
         state.hoverIn = true;
         this.attr({
           fill: '#ff00ff',
@@ -408,7 +410,7 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
           callback();
         }
         group.unclick();
-      })
+      });
       group
         .data('origTransform', path.transform().local)
         .attr({ x, y, width, height })

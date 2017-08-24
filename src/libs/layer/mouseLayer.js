@@ -1,15 +1,14 @@
 import classNames from 'classnames';
 
-const mouseStyle = {
-  hand: {
-    src: require('../../assets/hand.svg'),
-  },
-  pen: {
-    src: require('../../assets/pen.svg'),
-  },
-};
-
-function getSrc(type) {
+const getSrc = (type) => {
+	const mouseStyle = {
+		hand: {
+			src: require('../../assets/hand.svg'),
+		},
+		pen: {
+			src: require('../../assets/pen.svg'),
+		},
+	};
 	let src = '';
 	switch (type) {
 		case 'pen': {
@@ -27,34 +26,24 @@ function getSrc(type) {
 	return src;
 }
 
-export default (role = 'Broadcaster', { class: className, __TYPE__ = 'pen', x = 0, y = 0, w = 25, h = 25 }, target) => {
-  const src = getSrc(__TYPE__);
-  const mouse = target.image(src, x, y, w, h).attr({
-    __TYPE__,
-    class: classNames('mouse', className),
+export default ({ role = 'Broadcaster', attr = {}, target }) => {
+  const src = getSrc(attr.__TYPE__);
+  const mouse = target.image(src, attr.x || 0, attr.y || 0, attr.w || 25, attr.h || 25).attr({
+	  class: classNames('mouse'),
+	  ...attr,
   });
   const group = target.group({
-    class: 'mouseLayer',
+    class: classNames('mouseLayer', attr.class),
   }).add(mouse);
   return {
 	  layer: group,
     handleSetPosition({ x = 0, y = 0, w = 25, h = 25 }, callback) {
       let info = {};
       if (role === 'Broadcaster') {
-        info = {
-          x: x - 1,
-          y: y - h - 1,
-          w,
-          h,
-        };
+        info = { x: x - 1, y: y - h - 1, w, h };
       }
       if (role === 'Viewer') {
-        info = {
-          x,
-          y,
-          w,
-          h,
-        };
+        info = { x, y, w, h };
       }
       mouse.attr(info);
 	    if (role === 'Broadcaster' && typeof callback === 'function') {
@@ -63,10 +52,9 @@ export default (role = 'Broadcaster', { class: className, __TYPE__ = 'pen', x = 
       return mouse;
     },
 	  handleSetType(type = 'pen', callback) {
-		  const src = getSrc(type);
 		  mouse.attr({
 			  __TYPE__: type,
-			  src,
+			  src: getSrc(type),
 		  });
 		  if (role === 'Broadcaster' && typeof callback === 'function') {
 			  callback(mouse.attr());
