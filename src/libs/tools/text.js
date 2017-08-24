@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
 export default (attrData = {}, target, isInit) => {
-  const { __ID__, text = '', fontSize = 16, textPathAttr, __text__, onChange, className = '', x = 0, y = 0, stroke = '#f00', fill = '#f00' } = attrData;
+  const { __ID__, text = '', fontSize = 16, textPathAttr, __text__, onChange, className = '', x = 0, y = 0, fill = '#f00' } = attrData;
   const input = document.createElement('input');
   const group = target.group({
     class: classNames('textItemWrap', className),

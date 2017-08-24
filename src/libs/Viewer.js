@@ -93,7 +93,6 @@ class Viewer extends React.Component {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
 	  if (NWidth !== width || NHeight !== height || NClassName !== className){
-		  console.log(NWidth, width, NHeight, height, NClassName, className);
 		  return true;
 	  }
 	  return false;

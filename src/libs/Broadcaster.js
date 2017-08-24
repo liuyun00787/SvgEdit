@@ -80,10 +80,15 @@ class Broadcaster extends React.Component {
         x: 0,
 	      y: 0,
       }, svg, {
-	      onSelect: (tool, info) => {
+      	onColorChange: (config) => {
+      		console.log(config, 11111);
+      		this.whiteBoardLayer.handleSetConfig(config);
+	      },
+	      onSelect: (info) => {
 		      const { onWbToolsChange } = that.props;
 		      const { whiteBoardLayer } = that;
-		      whiteBoardLayer.handleSetTools(tool);
+		      const { __TYPE__, __CONF__ } = info;
+		      whiteBoardLayer.handleSetTools(__TYPE__, __CONF__);
 		      if (typeof onWbToolsChange === 'function') {
 			      onWbToolsChange(info);
 		      }
@@ -177,7 +182,7 @@ class Broadcaster extends React.Component {
     };
     return (
       <svg
-	      ref={e => this.svgWrap = e}
+        ref={e => this.svgWrap = e}
         style={styles}
         width={width}
         height={height}
@@ -202,8 +207,8 @@ Broadcaster.propTypes = {
   wBToolsInfo: PropTypes.object,
   onMouseChange: PropTypes.func,
   onDrawChange: PropTypes.func,
-	onDeleteChange: PropTypes.func,
-	onWbToolsChange: PropTypes.func,
+  onDeleteChange: PropTypes.func,
+  onWbToolsChange: PropTypes.func,
 };
 
 export default Broadcaster;

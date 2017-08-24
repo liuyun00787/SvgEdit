@@ -52,7 +52,7 @@ class _TEST__ extends React.Component {
         onDrawChange={(item) => {
           dispatch({ type: 'socket/drawChange', drawItem: item });
         }}
-        onDelete={(item) => {
+        onDeleteChange={(item) => {
           dispatch({ type: 'socket/deleteChange', item });
         }}
       />

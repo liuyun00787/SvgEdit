@@ -12,9 +12,13 @@ const mouseStyle = {
 	clear: require('../../assets/icon-clear.svg'),
 };
 
-export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onDrag, onSelect, onDeleteChange }) => {
+export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onColorChange, onDrag, onSelect, onDeleteChange }) => {
   const state = {
     isDrag: false,
+	  config: {
+		  strokeWidth: 5,
+		  stroke: '#00f',
+	  },
   };
 	let origTransform;
   const group = target.group({
@@ -26,7 +30,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
   if (role === 'Broadcaster') {
     group.drag(function (dx, dy) {
       if (!state.isDrag) return;
-      const { width:Tw, height: tH, x, y } = this.attr();
+      const { width: Tw, height: tH, x, y } = this.attr();
       const { width, height } = target.attr();
 	    let _dx = dx;
 	    let _dy = dy;
@@ -57,6 +61,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
     target.image(mouseStyle.pen, 10, 10, 25, 25),
   ).attr({
     __TYPE__: 'path',
+	  __CONF__: JSON.stringify(state.config),
     class: classNames('mouse', 'wbTool', 'path', className),
   }).click(select);
   const text = target.group(
@@ -64,6 +69,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
     target.image(mouseStyle.text, 55, 10, 25, 25),
   ).attr({
     __TYPE__: 'text',
+	  __CONF__: JSON.stringify(state.config),
     class: classNames('mouse', 'wbTool', 'text', className),
   }).click(select);
   const rect = target.group(
@@ -71,6 +77,7 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
     target.image(mouseStyle.rect, 100, 10, 25, 25),
   ).attr({
     __TYPE__: 'rect',
+	  __CONF__: JSON.stringify(state.config),
     class: classNames('mouse', 'wbTool', 'rect', className),
   }).click(select);
   const circle = target.group(
@@ -87,15 +94,50 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
     __TYPE__: 'select',
     class: classNames('mouse', 'wbTool', 'select', className),
   }).click(select);
+	const seting = target.group(
+		target.rect(225, 50, 130, 160).attr({ class: 'seting', fill: '#fff', fillOpacity: 1 }),
+	);
+	createColor(['#000', '#0f0', '#f00', '#00f']);
+	createSize([5, 10, 15]);
+	function createSize(sizes) {
+		for (let i = 0; i < sizes.length; i += 1) {
+			const color = target.circle((245 + (i * 30)), 70, (i * 2) + 5)
+				.attr({ class: 'seting', __SIZE__: sizes[i], fill: '#000', fillOpacity: 1 })
+				.click(function() {
+					const attr = this.attr();
+					state.config = {
+						...state.config,
+						strokeWidth: attr.__SIZE__,
+					};
+					pen.attr({ __CONF__: state.config });
+					onColorChange(state.config);
+				})
+			seting.add(color);
+		}
+	}
+	function createColor(colors) {
+		for (let i = 0; i < colors.length; i += 1) {
+			const color = target.circle((245 + (i * 30)), 100, 10)
+				.attr({ class: 'seting', __COLOR__: colors[i], fill: colors[i], fillOpacity: 1 })
+				.click(function() {
+					const attr = this.attr();
+					state.config = {
+						...state.config,
+						stroke: attr.__COLOR__,
+					};
+					pen.attr({ __CONF__: state.config });
+					onColorChange(state.config);
+				})
+			seting.add(color);
+		}
+	}
   const color = target.group(
     target.rect(225, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
     target.image(mouseStyle.color, 235, 10, 25, 25),
   ).attr({
     __TYPE__: 'color',
     class: classNames('mouse', 'wbTool', 'color', className),
-  }).click(function() {
-
-  });
+  }).click(select);
 	const clear = target.group(
 		target.rect(270, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
 		target.image(mouseStyle.clear, 280, 10, 25, 25),
@@ -128,12 +170,33 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
         fill,
       });
     });
-  group.add(bg, pen, text, rect, circle, selectI, color, clear, drag);
+  group.add(bg, pen, text, rect, circle, selectI, color, clear, drag, seting);
+	seting.remove();
+	function select() {
+		group.selectAll('.wbTool .whiteBoardBG').attr({
+			fill,
+		});
+		this.select('.whiteBoardBG').attr({
+			fill: selectFill,
+		});
+		this.attr({
+			__CONF__: JSON.stringify(state.config),
+		});
+		const attr = this.attr();
+		if (typeof onSelect === 'function') {
+			onSelect(attr);
+		}
+		if (attr.__TYPE__ === 'color') {
+			group.add(seting);
+		} else {
+			seting.remove();
+			seting.data('show', false);
+		}
+	}
   return {
 	  layer: group,
     handleReset() {
 	    origTransform = '';
-	    if (role !== 'Broadcaster') return;
 	    group.attr({
 		    transform: '',
       })
@@ -143,10 +206,9 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 	    this.select('.whiteBoardBG .path').attr({
 		    fill: selectFill,
 	    });
-	    const { __TYPE__ } = this.attr();
 	    const attr = group.attr();
 	    if (typeof onSelect === 'function') {
-		    onSelect(attr.__TYPE__, attr);
+		    onSelect(attr);
 	    }
     },
     handleSetPosition(transform) {
@@ -162,21 +224,8 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
       if (group.select(`.${tool}`)) {
         group.select(`.${tool} .whiteBoardBG`).attr({
           fill: selectFill,
-        })
+        });
       }
     },
   };
-  function select() {
-    if (role !== 'Broadcaster') return;
-    group.selectAll('.wbTool .whiteBoardBG').attr({
-      fill,
-    });
-    this.select('.whiteBoardBG').attr({
-      fill: selectFill,
-    });
-    const attr = this.attr();
-    if (typeof onSelect === 'function') {
-	    onSelect(attr.__TYPE__, attr);
-    }
-  }
 };

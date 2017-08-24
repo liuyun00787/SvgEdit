@@ -3,7 +3,7 @@ import { createPath, createText, createRect, createCircle } from '../tools';
 
 Snap.plugin((Snap, Element, Paper, glob) => {
 	const elproto = Element.prototype;
-	elproto.wBtoFront = function (target) {
+	elproto.wBtoFront = function () {
 		this.paper.select('.whiteBoardLayer').add(this);
 	};
 });
@@ -16,6 +16,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     isDraw: true,
     isSelect: false,
     tools: 'path',
+	  config: {},
   };
   const group = target.group({
     class: classNames('whiteBoardLayer', className),
@@ -49,6 +50,9 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     if (isActive) {
       return;
     }
+	  if (tools === 'color') {
+		  return;
+	  }
     this.data('isActive', true);
     if (tools === 'path') {
       pathLayer = createPath({ x: e.offsetX, y: e.offsetY }, target);
@@ -100,6 +104,33 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
       }
     });
     state.selectItem = drawPath;
+	  if (drawPath.attr('__TYPE__') === 'text') {
+	  	const dd = Object.assign({}, state.config);
+		  dd.fill = dd.stroke;
+		  switch (dd.strokeWidth) {
+			  case 5: {
+				  dd.fontSize = 16;
+			  	break;
+			  }
+			  case 10: {
+				  dd.fontSize = 18;
+				  break;
+			  }
+			  case 15: {
+				  dd.fontSize = 20;
+				  break;
+			  }
+			  default: {
+				  dd.fontSize = 16;
+			  }
+		  }
+		  delete dd.strokeWidth;
+		  delete dd.stroke;
+		  console.log(drawPath.select('.text'));
+		  drawPath.select('.text').attr(dd);
+	  } else {
+		  drawPath.attr(state.config);
+	  }
     group.add(drawPath);
     onDrawChange(drawPath);
   });
@@ -113,6 +144,9 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     if (!isActive) {
       return;
     }
+	  if (tools === 'color') {
+		  return;
+	  }
     if (tools === 'path') {
       let { d } = state.selectItem.attr();
       state.selectItem.attr({ d: d += `,${e.offsetX},${e.offsetY}` });
@@ -136,17 +170,19 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     }
     onDrawChange(state.selectItem);
   });
-  group.mouseup(function (e) {
+  group.mouseup(function () {
     if (role !== 'Broadcaster') return;
-    const { isDraw } = state;
-    const { isActive } = this.data();
+    const { isDraw, tools } = state;
     if (isDraw) {
       // wbItemWrap.handleShow(state.selectItem);
       // state.isSelect = true;
     }
+	  if (tools === 'color') {
+		  return;
+	  }
     this.data('isActive', false);
   });
-  group.dblclick(function (e) {
+  group.dblclick(function () {
     if (role !== 'Broadcaster') return;
     const { isSelect } = state;
     const { isActive } = this.data();
@@ -157,6 +193,9 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
   });
   return {
 	  layer: group,
+	  handleSetConfig: (config) => {
+		  state.config = config;
+	  },
     handleSelectItem: (__ID__) => {
 	    return group.select(`.${__ID__}`);
     },
@@ -204,11 +243,14 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0, i
     handleSelect: (isSelect = false) => {
       state.isDraw = !isSelect;
     },
-    handleSetTools: (tools = 'path') => {
+    handleSetTools: (tools = 'path', config) => {
       if (tools === 'select') {
         state.isDraw = false;
         state.isSelect = true;
       } else {
+      	if (config) {
+		      state.config = JSON.parse(config);
+	      }
         state.isDraw = true;
         state.isSelect = false;
         state.tools = tools;
@@ -370,7 +412,7 @@ function CreateWbItemWrap({ role = 'Broadcaster', onDrawChange, className = '', 
       group
         .data('origTransform', path.transform().local)
         .attr({ x, y, width, height })
-        .wBtoFront(group);
+        .wBtoFront();
       square2.attr({
         x: x - 10,
         y: y - 10,
