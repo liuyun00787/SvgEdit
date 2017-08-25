@@ -67,6 +67,7 @@ export default {
       });
       socket.on('drawChangeReply', (res) => {
         const { data } = JSON.parse(res);
+        console.log(data, 1111);
         __dispatch__({ type: 'setDrawItems', drawItem: data.item, clear: data.clear });
       });
       socket.on('deleteChangeReply', (res) => {
@@ -93,13 +94,13 @@ export default {
         console.log(e)
       }
     },
-    *drawChange({ drawItem, clear }, { put }) {
+    *drawChange({ item, clear }, { put }) {
       try {
-        yield put({ type: 'setDrawItems', drawItem, clear });
+        yield put({ type: 'setDrawItems', drawItem: item, clear });
         if (clear) {
           socket.emit('drawChange', JSON.stringify({ data: { clear } }));
         } else {
-          const req = drawItem;
+          const req = item;
           socket.emit('drawChange', JSON.stringify({ data: { item: req, clear } }));
         }
       } catch (e) {

@@ -1,5 +1,6 @@
 const __VERSION__ = require('./package.json').version;
 let __ENV__ = 'develop';
+let Dose = false;
 try {
   const argv = process.argv[2] || '';
   const a = argv.split('=');
@@ -18,6 +19,10 @@ try {
   if (a[1] === 'production') {
     __ENV__ = 'production';
   }
+  if (a[1] === 'docs') {
+    Dose = true;
+    __ENV__ = 'production';
+  }
 } catch (e) {
   console.log(e);
   __ENV__ = 'develop';
@@ -30,7 +35,7 @@ console.log('');
 console.log('------------------------------------------');
 console.log('------------------------------------------');
 
-export default {
+const config = {
   "entry": "src/index.js",
   // "hash": true,
   "define": {
@@ -67,3 +72,7 @@ export default {
     }
   }
 }
+if (Dose) {
+  config.outputPath = '../docs';
+}
+export default config;
