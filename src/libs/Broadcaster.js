@@ -10,8 +10,10 @@ class Broadcaster extends React.Component {
 	  this.role = 'Broadcaster';
     this.state = {
     	images: [],
+	    text: '',
     };
-	  this.upload = {};
+	  this.uploadInput = {};
+	  this.textInput = {};
 	  this.images = [];
     this.historyItems = [];
     this.PrevItems = [];
@@ -88,6 +90,7 @@ class Broadcaster extends React.Component {
 			      onDeleteChange(item);
 		      }
 	      },
+	      textInput: this.textInput,
       });
 			// 白板工具层
 	    this.wBToolsLayer = createWBToolsLayer({
@@ -122,7 +125,7 @@ class Broadcaster extends React.Component {
 				    onWbToolsChange(info);
 			    }
 		    },
-		    handleUpload: this.upload,
+		    handleUpload: this.uploadInput,
 	    });
 			// 鼠标层
       this.mouseLayer = createMouseLayer({
@@ -257,10 +260,39 @@ class Broadcaster extends React.Component {
 				    reader.readAsDataURL(files);
 			    }}
 			    ref={e => {
-				    this.upload.select = () => {
+				    this.uploadInput.select = () => {
 					    e.click();
 				    };
-				    this.upload.target = e;
+				    this.uploadInput.target = e;
+			    }}
+		    />
+		    <input
+			    style={{
+				    position: 'absolute',
+				    overflow: 'hidden',
+				    zIndex: 9999,
+				    width: 100,
+				    height: 50,
+				    opacity: 1,
+			    }}
+			    ref={e => {
+				    this.textInput.select = ({ text = '', cb, blurCB }) => {
+					    const callback = (e) => {
+					    	if (typeof cb === 'function') {
+							    cb(e.target.value);
+						    }
+					    };
+					    e.addEventListener('blur', () => {
+						    if (typeof blurCB === 'function') {
+							    blurCB();
+						    }
+						    e.removeEventListener('input', callback);
+					    });
+					    e.addEventListener('input', callback);
+					    e.value = text;
+					    e.focus();
+				    };
+				    this.textInput.target = e;
 			    }}
 		    />
 	    </div>

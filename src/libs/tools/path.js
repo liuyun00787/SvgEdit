@@ -1,28 +1,22 @@
 import classNames from 'classnames';
 
-export default (attrData = {}, target, isInit) => {
-  let path;
-  if (isInit) {
-    path = target.paper.path(attrData);
-  } else {
-    const { __ID__, className = '', x = 0, y = 0, strokeWidth = 5, stroke = '#f00', fill = 'rgba(0,0,0,0)' } = attrData;
-    path = target.paper.path({
-      d: `M${x},${y}`,
-      stroke,
-      strokeWidth,
-      fill,
-    });
-    path.attr({
-	    __TYPE__: 'path',
-	    class: classNames('pathItem', __ID__ || path.id, className),
-    })
-  }
-  if (attrData.__ID__) {
-    path.id = attrData.__ID__;
-  }
-  path.attr({
-    __ID__: attrData.__ID__ || path.id,
-  })
+export default ({ role = 'Broadcaster', attr = {}, target }) => {
+	const path = target.paper.path().attr({
+		...attr,
+		d: attr.d ? attr.d : `M${attr.x},${attr.y}`,
+		fill: attr.fill ? attr.fill : 'rgba(0,0,0,0)',
+		__TYPE__: attr.__TYPE__ ? attr.__TYPE__ : 'path',
+	});
+	if (!attr.__ID__) {
+		path.attr({
+			__ID__: path.id,
+			class: classNames('pathItem', path.id),
+		});
+	} else {
+		path.attr({
+			id: attr.__ID__,
+		});
+	}
   return {
     group: path,
   };

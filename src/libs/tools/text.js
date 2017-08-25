@@ -1,82 +1,51 @@
 import classNames from 'classnames';
 
-export default (attrData = {}, target, isInit) => {
-  const { __ID__, text = '', fontSize = 16, textPathAttr, __text__, onChange, className = '', x = 0, y = 0, fill = '#f00' } = attrData;
-  const input = document.createElement('input');
-  const group = target.group({
-    class: classNames('textItemWrap', className),
-  });
-  group.attr({
-    textPathAttr,
-	  __TYPE__: 'text',
-    class: classNames('textItem', __ID__ || group.id),
-    __ID__: __ID__ || group.id,
-  });
-  let textAttr = {};
-  if (textPathAttr) {
-    textAttr = JSON.parse(textPathAttr) || {};
-  }
-  const textPath = target.paper.text(x, y, `${ text || __text__ || '' } |`);
-  textPath.attr({
-    class: classNames('text'),
-    fill,
-    'font-size': fontSize,
-    __ID__: textPath.id,
-  });
-  if (isInit) {
-    textPath.attr({
-      text: textAttr.__text__,
-    });
-  }
-  group.add(textPath);
-  group.attr({
-    textPathAttr: JSON.stringify(textPath.attr()),
-  });
-  input.value = textAttr.__text__ || '';
-  input.id = `input-${group.id}`;
-  input.className = 'input-itemText';
-  input.style.opacity = '0';
-  input.style.position = 'fixed';
-  input.style.top = 0;
-  input.style.left = 0;
-  input.style.zIndex = -1;
-  document.body.appendChild(input);
-  setTimeout(() => {
-    input.focus();
-  }, 500);
-  input.oninput = (e) => {
-    input.focus();
-    textPath.attr({
-      text: `${e.target.value || ''} |`,
-      __text__: `${e.target.value || ''} |`,
-    });
-    group.attr({
-      textPathAttr: JSON.stringify(textPath.attr()),
-    })
-    if (typeof onChange === 'function') {
-      onChange(group, `${e.target.value || ''} |`, () => input.focus());
-    }
-  };
-  input.onblur = (e) => {
-    textPath.attr({
-      text: e.target.value  || '',
-      __text__: e.target.value  || '',
-    });
-    group.attr({
-      textPathAttr: JSON.stringify(textPath.attr()),
-    })
-    if (typeof onChange === 'function') {
-      onChange(group, e.target.value || '', () => input.focus());
-    }
-  };
+export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDrawChange, handleShow }) => {
+	const after = ' | ';
+	const path = target.paper.text(attr.x, attr.y, `${attr.text || '' } ${after}`).attr({
+		...attr,
+		fontSize: attr.fontSize ? attr.fontSize : 16,
+		__TEXT__: attr.__TEXT__ ? attr.__TEXT__ : '',
+		__TYPE__: attr.__TYPE__ ? attr.__TYPE__ : 'text',
+	});
+	if (!attr.__ID__) {
+		path.attr({
+			__ID__: path.id,
+			class: classNames('textItem', path.id),
+		});
+	} else {
+		path.attr({
+			id: attr.__ID__,
+		});
+	}
+	const setText = () => {
+		const { __TEXT__ = '' } = path.attr();
+		const text = __TEXT__.replace(after, '');
+		if (typeof textInput.select === 'function') {
+			textInput.select({
+				text,
+				cb(text = '') {
+					const T = text + after;
+					path.attr({ text: T, __TEXT__: T.replace(after, '') });
+					if (typeof onDrawChange === 'function') {
+						onDrawChange(path);
+					}
+					if (typeof handleShow === 'function') {
+						handleShow(path);
+					}
+				},
+				blurCB() {
+					path.attr({ text: path.attr('__TEXT__') });
+				}
+			});
+		}
+	};
+	setTimeout(setText, 100);
 
   return {
-    group,
-    handeFocus: () => {
-      setTimeout(() => {
-        // document.getElementsByClassName('input-itemText').blur();
-        input.focus();
-      }, 500);
+    group: path,
+    handeFocus() {
+      setTimeout(setText, 100);
     },
   };
 };

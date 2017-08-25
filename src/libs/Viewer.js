@@ -74,14 +74,10 @@ class Viewer extends React.Component {
               this.PrevItems.push(selectItem);
             } else {
               const thatItem = handleSelectItem(selectItem.__ID__);
-              thatItem.attr(selectItem);
               this.PrevItems[index] = selectItem;
-              if (selectItem.__TYPE__ === 'text') {
-                const textPathAttr = JSON.parse(selectItem.textPathAttr);
-                thatItem.attr(selectItem)
-										.select('.text')
-										.attr({ textPathAttr })
-										.attr({ text: textPathAttr.__text__ });
+	            thatItem.attr(selectItem);
+	            if (selectItem.__TYPE__ === 'text') {
+	              thatItem.attr({ text: selectItem.__TEXT__ });
               }
             }
           }

@@ -29,10 +29,6 @@ const tools = [
 		name: 'images',
 		icon: require('../../assets/icon-images.svg'),
 	},
-	// {
-	// 	name: 'upload',
-	// 	icon: require('../../assets/icon-upload.svg'),
-	// },
 	{
 		name: 'clear',
 		icon: require('../../assets/icon-clear.svg'),
@@ -118,17 +114,6 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						// 	onDeleteChange(false);
 						// }
 						handleUpload.select();
-						this.select('.WBToolsBG').attr({
-							fill: selectFill,
-						});
-						setTimeout(() => {
-							this.select('.WBToolsBG').attr({
-								fill,
-							});
-						}, 100);
-						return;
-					}
-					if (__TYPE__ === 'images') {
 						this.select('.WBToolsBG').attr({
 							fill: selectFill,
 						});
