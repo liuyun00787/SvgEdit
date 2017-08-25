@@ -231,7 +231,7 @@ class Broadcaster extends React.Component {
 			    style={{
 				    position: 'absolute',
 				    overflow: 'hidden',
-				    zIndex: -1,
+				    zIndex: -9999,
 				    width: 0,
 				    height: 0,
 				    opacity: 0,
@@ -270,10 +270,10 @@ class Broadcaster extends React.Component {
 			    style={{
 				    position: 'absolute',
 				    overflow: 'hidden',
-				    zIndex: 9999,
-				    width: 100,
-				    height: 50,
-				    opacity: 1,
+				    zIndex: -9999,
+				    width: 0,
+				    height: 0,
+				    opacity: 0,
 			    }}
 			    ref={e => {
 				    this.textInput.select = ({ text = '', cb, blurCB }) => {
