@@ -113,9 +113,6 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						return;
 					}
 					if (__TYPE__ === 'images') {
-						// if (typeof onDeleteChange === 'function') {
-						// 	onDeleteChange(false);
-						// }
 						const that = this;
 						if (!this.uploading) {
 							this.uploading = true;
@@ -125,9 +122,11 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 										const path = handleDraw({ attr });
 										onDrawChange(path.attr());
 									}
+								},
+								setUploading() {
+									that.uploading = false;
 								}
 							});
-							setTimeout(() => that.uploading = false, 500);
 						}
 
 						this.select('.WBToolsBG').attr({

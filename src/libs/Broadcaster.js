@@ -244,13 +244,22 @@ class Broadcaster extends React.Component {
 			    ref={e => {
 				    let changeListen;
 				    this.uploadInput.target = e;
-				    this.uploadInput.select = ({ cb }) => {
+				    this.uploadInput.select = ({ cb, setUploading }) => {
 					    if (changeListen) {
 						    changeListen.remove();
 						    changeListen = null;
 					    }
 					    changeListen = listen(e, 'change', (e) => {
+						    if (changeListen) {
+							    changeListen.remove();
+							    changeListen = null;
+						    }
 						    const files = e.target.files[0];
+						    if (files.size / 1024 > 1000) {
+							    e.target.value = '';
+							    alert('附件不能大于1M!');
+						    	return;
+						    }
 						    const reader = new FileReader();
 						    reader.onload = (function(file) {
 							    return function() {
@@ -276,6 +285,9 @@ class Broadcaster extends React.Component {
 						    }
 					    });
 					    e.click();
+					    if (typeof setUploading === 'function') {
+						    setUploading();
+					    }
 				    };
 			    }}
 		    />
