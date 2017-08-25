@@ -50,7 +50,7 @@ class _TEST__ extends React.Component {
           dispatch({ type: 'socket/mouseMove', mouseInfo: mouse });
         }}
         onDrawChange={(item) => {
-          dispatch({ type: 'socket/drawChange', drawItem: item });
+          dispatch({ type: 'socket/drawChange', item });
         }}
         onDeleteChange={(item) => {
           dispatch({ type: 'socket/deleteChange', item });

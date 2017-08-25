@@ -94,15 +94,10 @@ export default {
         console.log(e)
       }
     },
-    *drawChange({ item, clear }, { put }) {
+    *drawChange({ item }, { put }) {
       try {
-        yield put({ type: 'setDrawItems', drawItem: item, clear });
-        if (clear) {
-          socket.emit('drawChange', JSON.stringify({ data: { clear } }));
-        } else {
-          const req = item;
-          socket.emit('drawChange', JSON.stringify({ data: { item: req, clear } }));
-        }
+        yield put({ type: 'setDrawItems', drawItem: item });
+        socket.emit('drawChange', JSON.stringify({ data: { item } }));
       } catch (e) {
         console.log(e);
       }

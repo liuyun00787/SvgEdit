@@ -70,8 +70,10 @@ class Viewer extends React.Component {
             const { __ID__ } = selectItem;
             const index = this.PrevItems.findIndex(item => item.__ID__ === __ID__);
             if (index === -1) {
-              handleDraw(selectItem);
-              this.PrevItems.push(selectItem);
+            	if (selectItem.__ID__) {
+		            handleDraw(selectItem);
+		            this.PrevItems.push(selectItem);
+	            }
             } else {
               const thatItem = handleSelectItem(selectItem.__ID__);
               this.PrevItems[index] = selectItem;

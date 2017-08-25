@@ -6,7 +6,7 @@
     "dev": "rm -fr lib && mkdir lib && cp -R ./src/assets ./lib/assets && babel src --watch  -d lib",
     "build": "rm -fr lib && mkdir lib && && cp -R ./src/assets ./lib/assets && babel src -d lib",
     "lint": "eslint --ext .js",
-    "precommit": "npm run lint && npm run build"
+    "precommit": "npm run lint && npm run build && cd example && npm run build-docs"
   },
   "engines": {
     "install-node": "6.9.2"

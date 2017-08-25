@@ -69,10 +69,10 @@ class Broadcaster extends React.Component {
         width: clientWidth,
         height: clientHeight,
       }, svg, {
-	      onDrawChange(items) {
+	      onDrawChange(item) {
 		      const { onDrawChange } = that.props;
 		      if (typeof onDrawChange === 'function') {
-			      onDrawChange(items.attr());
+			      onDrawChange(item.attr());
 		      }
 	      },
 	      onDeleteChange: (item) => {
