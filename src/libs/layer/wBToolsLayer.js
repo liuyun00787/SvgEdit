@@ -39,7 +39,7 @@ const tools = [
 	},
 ];
 
-export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDeleteChange, handleUpload }) => {
+export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDrawChange, onDeleteChange, handleUpload, handleDraw, handleHideItem }) => {
   const state = {
     isDrag: false,
 	  config: {
@@ -95,6 +95,9 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 				.click(function() {
 					const { __TYPE__ } = this.attr();
 					seting.remove();
+					if (typeof handleHideItem === 'function') {
+						handleHideItem();
+					}
 					if (__TYPE__ === 'clear') {
 						if (typeof onDeleteChange === 'function') {
 							onDeleteChange(false);
@@ -113,7 +116,15 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						// if (typeof onDeleteChange === 'function') {
 						// 	onDeleteChange(false);
 						// }
-						handleUpload.select();
+						handleUpload.select({
+							cb({ attr }) {
+								if (typeof handleDraw === 'function') {
+									const path = handleDraw({ attr });
+									// console.log(path, 1111);
+									onDrawChange(path.attr());
+								}
+							}
+						});
 						this.select('.WBToolsBG').attr({
 							fill: selectFill,
 						});

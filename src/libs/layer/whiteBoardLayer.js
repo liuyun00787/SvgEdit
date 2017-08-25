@@ -310,6 +310,7 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0 },
       state.selectItem = path.group;
       return path.group;
     },
+	  handleHideItem: wbItemWrap.handleHide,
   };
 };
 

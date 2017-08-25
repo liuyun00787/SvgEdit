@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import is from 'is_js';
+import listen from 'event-listener';
 import classNames from 'classnames';
 import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from './layer';
@@ -39,16 +40,6 @@ class Broadcaster extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
-	  if (nextState.images.length !== this.images.length) {
-		  if (this.whiteBoardLayer) {
-		  	const newImages = nextState.images[nextState.images.length - 1] || {};
-			  this.whiteBoardLayer.handleDraw({
-				  ...newImages,
-				  __TYPE__: 'image',
-			  });
-		  }
-		  this.images = [].concat(nextState.images);
-	  }
 	  if (NWidth !== width || NHeight !== height || NClassName !== className) {
 	    return true;
     }
@@ -126,6 +117,20 @@ class Broadcaster extends React.Component {
 			    }
 		    },
 		    handleUpload: this.uploadInput,
+		    onDrawChange: this.props.onDrawChange,
+		    handleDraw({ attr }) {
+			    if (that.whiteBoardLayer) {
+				    return that.whiteBoardLayer.handleDraw({
+					    ...attr,
+					    __TYPE__: 'image',
+				    });
+			    }
+	      },
+		    handleHideItem() {
+			    if (that.whiteBoardLayer) {
+				    that.whiteBoardLayer.handleHideItem();
+			    }
+		    },
 	    });
 			// 鼠标层
       this.mouseLayer = createMouseLayer({
@@ -236,34 +241,41 @@ class Broadcaster extends React.Component {
 				    height: 0,
 				    opacity: 0,
 			    }}
-			    onChange={(e) => {
-				    const files = e.target.files[0];
-				    const reader = new FileReader();
-				    reader.onload = (function(file) {
-					    return function(e) {
-						    const _ = this;
-						    const image = new Image();
-						    image.onload = function(){
-							    const { images } = that.state;
-							    images.push({
-								    href: _.result,
-								    width: image.width,
-								    height: image.height,
-							    });
-							    that.setState({
-								    images: images,
-							    });
-						    };
-						    image.src = _.result;
-					    };
-				    })(files);
-				    reader.readAsDataURL(files);
-			    }}
 			    ref={e => {
-				    this.uploadInput.select = () => {
+				    let changeListen;
+				    this.uploadInput.target = e;
+				    this.uploadInput.select = ({ cb }) => {
+					    if (changeListen) {
+						    changeListen.remove();
+						    changeListen = null;
+					    }
+					    changeListen = listen(e, 'change', (e) => {
+						    const files = e.target.files[0];
+						    const reader = new FileReader();
+						    reader.onload = (function(file) {
+							    return function(e) {
+								    const _ = this;
+								    const image = new Image();
+								    image.onload = function(){
+									    if (typeof cb === 'function') {
+										    cb({
+											    attr: {
+												    href: _.result,
+												    width: image.width,
+												    height: image.height,
+											    },
+										    });
+									    }
+								    };
+								    image.src = _.result;
+							    };
+						    })(files);
+						    if (files) {
+							    reader.readAsDataURL(files);
+						    }
+					    });
 					    e.click();
 				    };
-				    this.uploadInput.target = e;
 			    }}
 		    />
 		    <input
@@ -276,23 +288,31 @@ class Broadcaster extends React.Component {
 				    opacity: 0,
 			    }}
 			    ref={e => {
+				    let inputListen;
+				    this.textInput.target = e;
 				    this.textInput.select = ({ text = '', cb, blurCB }) => {
 					    const callback = (e) => {
 					    	if (typeof cb === 'function') {
 							    cb(e.target.value);
 						    }
 					    };
-					    e.addEventListener('blur', () => {
+					    if (inputListen) {
+						    inputListen.remove();
+						    inputListen = null;
+					    }
+					    inputListen = listen(e, 'input', callback);
+					    listen(e, 'blur', () => {
 						    if (typeof blurCB === 'function') {
 							    blurCB();
 						    }
-						    e.removeEventListener('input', callback);
+						    if (inputListen) {
+							    inputListen.remove();
+							    inputListen = null;
+						    }
 					    });
-					    e.addEventListener('input', callback);
 					    e.value = text;
 					    e.focus();
 				    };
-				    this.textInput.target = e;
 			    }}
 		    />
 	    </div>
