@@ -3,32 +3,32 @@ import classNames from 'classnames';
 const getSrc = (type) => {
 	const mouseStyle = {
 		hand: {
-			src: require('../../assets/hand.svg'),
+			href: require('../../assets/hand.svg'),
 		},
 		pen: {
-			src: require('../../assets/pen.svg'),
+			href: require('../../assets/pen.svg'),
 		},
 	};
-	let src = '';
+	let href = '';
 	switch (type) {
 		case 'pen': {
-			src = mouseStyle.pen.src;
+			href = mouseStyle.pen.href;
 			break;
 		}
 		case 'hand': {
-			src = mouseStyle.hand.src;
+			href = mouseStyle.hand.href;
 			break;
 		}
 		default: {
-			src = mouseStyle.pen.src;
+			href = mouseStyle.pen.href;
 		}
 	}
-	return src;
+	return href;
 }
 
 export default ({ role = 'Broadcaster', attr = {}, target }) => {
-  const src = getSrc(attr.__TYPE__);
-  const mouse = target.image(src, attr.x || 0, attr.y || 0, attr.w || 25, attr.h || 25).attr({
+  const href = getSrc(attr.__TYPE__);
+  const mouse = target.image(href, attr.x || 0, attr.y || 0, attr.w || 25, attr.h || 25).attr({
 	  class: classNames('mouse'),
 	  ...attr,
   });

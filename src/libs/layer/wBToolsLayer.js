@@ -1,18 +1,49 @@
 import classNames from 'classnames';
 
-const mouseStyle = {
-  hand: require('../../assets/icon-hand.svg'),
-  pen: require('../../assets/icon-pen.svg'),
-  text: require('../../assets/icon-T.svg'),
-  rect: require('../../assets/icon-rect.svg'),
-  circle: require('../../assets/icon-circle.svg'),
-  select: require('../../assets/icon-select.svg'),
-  drag: require('../../assets/icon-drag.svg'),
-	color: require('../../assets/icon-color.svg'),
-	clear: require('../../assets/icon-clear.svg'),
-};
+const tools = [
+	{
+		name: 'select',
+		icon: require('../../assets/icon-select.svg'),
+	},
+	{
+		name: 'path',
+		icon: require('../../assets/icon-pen.svg'),
+	},
+	{
+		name: 'text',
+		icon: require('../../assets/icon-T.svg'),
+	},
+	{
+		name: 'rect',
+		icon: require('../../assets/icon-rect.svg'),
+	},
+	{
+		name: 'circle',
+		icon: require('../../assets/icon-circle.svg'),
+	},
+	{
+		name: 'color',
+		icon: require('../../assets/icon-color.svg'),
+	},
+	{
+		name: 'images',
+		icon: require('../../assets/icon-images.svg'),
+	},
+	// {
+	// 	name: 'upload',
+	// 	icon: require('../../assets/icon-upload.svg'),
+	// },
+	{
+		name: 'clear',
+		icon: require('../../assets/icon-clear.svg'),
+	},
+	{
+		name: 'drag',
+		icon: require('../../assets/icon-drag.svg'),
+	},
+];
 
-export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target, { onColorChange, onDrag, onSelect, onDeleteChange }) => {
+export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDeleteChange, handleUpload }) => {
   const state = {
     isDrag: false,
 	  config: {
@@ -20,12 +51,13 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 		  stroke: '#00f',
 	  },
   };
+  const className = attr.class;
 	let origTransform;
   const group = target.group({
-    class: classNames('wBToolsLayer', className),
+    class: classNames('wBToolsLayer', attr.class),
     width: 355,
     height: 50,
-    transform: `matrix(1,0,0,1,${x},${y})`,
+    transform: `matrix(1,0,0,1,${attr.x || 0},${attr.y || 0})`,
   });
   if (role === 'Broadcaster') {
     group.drag(function (dx, dy) {
@@ -50,50 +82,119 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
       }
     });
   }
+	const renderTools = (tools = [], type = 'X') => {
+		const fill = '#000';
+		const selectFill = '#fff';
+		return tools.map((item, index) => {
+			const X = index * 45;
+			return target.group(
+				target.rect(type === 'X' ? X : 0, type === 'Y' ? X : 0, 45, 45).attr({ class: 'WBToolsBG', fill, fillOpacity: .4 }),
+				target.image(item.icon, type === 'X' ? X + 10 : 10, type === 'Y' ? X + 10 : 10, 25, 25),
+			)
+				.attr({
+					class: `wbTool ${item.name}`,
+					__TYPE__: item.name,
+					__CONF__: JSON.stringify(state.config),
+				})
+				.click(function() {
+					const { __TYPE__ } = this.attr();
+					seting.remove();
+					if (__TYPE__ === 'clear') {
+						if (typeof onDeleteChange === 'function') {
+							onDeleteChange(false);
+						}
+						this.select('.WBToolsBG').attr({
+							fill: selectFill,
+						});
+						setTimeout(() => {
+							this.select('.WBToolsBG').attr({
+								fill,
+							});
+						}, 100);
+						return;
+					}
+					if (__TYPE__ === 'images') {
+						// if (typeof onDeleteChange === 'function') {
+						// 	onDeleteChange(false);
+						// }
+						handleUpload.select();
+						this.select('.WBToolsBG').attr({
+							fill: selectFill,
+						});
+						setTimeout(() => {
+							this.select('.WBToolsBG').attr({
+								fill,
+							});
+						}, 100);
+						return;
+					}
+					if (__TYPE__ === 'images') {
+						this.select('.WBToolsBG').attr({
+							fill: selectFill,
+						});
+						setTimeout(() => {
+							this.select('.WBToolsBG').attr({
+								fill,
+							});
+						}, 100);
+						return;
+					}
+					if (__TYPE__ === 'drag') {
+						return;
+					}
+					group.selectAll('.WBToolsBG').attr({
+						fill,
+					});
+					this.select('.WBToolsBG').attr({
+						fill: selectFill,
+					});
+					this.attr({
+						__CONF__: JSON.stringify(state.config),
+					});
+					const attr = this.attr();
+					if (typeof onSelect === 'function') {
+						onSelect(attr);
+					}
+					if (attr.__TYPE__ === 'color') {
+						group.add(seting);
+					} else {
+						seting.data('show', false);
+					}
+				})
+				.mousedown(function() {
+					const { __TYPE__ } = this.attr();
+					if (__TYPE__ === 'drag') {
+						state.isDrag = true;
+						this.select('.WBToolsBG').attr({
+							fill: selectFill,
+						});
+					}
+			  })
+				.mouseup(function () {
+					const { __TYPE__ } = this.attr();
+				  if (__TYPE__ === 'drag') {
+					  state.isDrag = false;
+					  this.select('.WBToolsBG').attr({
+						  fill,
+					  });
+				  }
+				})
+				.dblclick(function() {
+					const { __TYPE__ } = this.attr();
+					if (__TYPE__ === 'clear') {
+						// 双击删全部
+						if (typeof onDeleteChange === 'function') {
+							onDeleteChange(true);
+						}
+					}
+				});
+		});
+	};
   group.attr({
     __ID__: group.id,
   });
-  const bg = target.rect(0, 0, 315, 45).attr({ class: 'toolsBG' });
-  const fill = '#00ffff';
-  const selectFill = '#f00';
-  const pen = target.group(
-    target.rect(0, 0, 45, 45).attr({ class: 'whiteBoardBG', fill: selectFill, fillOpacity: 1 }),
-    target.image(mouseStyle.pen, 10, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'path',
-	  __CONF__: JSON.stringify(state.config),
-    class: classNames('mouse', 'wbTool', 'path', className),
-  }).click(select);
-  const text = target.group(
-    target.rect(45, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.text, 55, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'text',
-	  __CONF__: JSON.stringify(state.config),
-    class: classNames('mouse', 'wbTool', 'text', className),
-  }).click(select);
-  const rect = target.group(
-    target.rect(90, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.rect, 100, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'rect',
-	  __CONF__: JSON.stringify(state.config),
-    class: classNames('mouse', 'wbTool', 'rect', className),
-  }).click(select);
-  const circle = target.group(
-    target.rect(135, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.circle, 145, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'circle',
-    class: classNames('mouse', 'wbTool', 'circle', className),
-  }).click(select);
-  const selectI = target.group(
-    target.rect(180, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.select, 190, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'select',
-    class: classNames('mouse', 'wbTool', 'select', className),
-  }).click(select);
+	group.add(renderTools(tools, 'X'));
+
 	const seting = target.group(
 		target.rect(225, 50, 130, 160).attr({ class: 'seting', fill: '#fff', fillOpacity: 1 }),
 	);
@@ -155,74 +256,9 @@ export default (role = 'Broadcaster', { class: className, x = 0, y = 0 }, target
 			seting.add(color);
 		}
 	}
-  const color = target.group(
-    target.rect(225, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.color, 235, 10, 25, 25),
-  ).attr({
-    __TYPE__: 'color',
-    class: classNames('mouse', 'wbTool', 'color', className),
-  }).click(select);
-	const clear = target.group(
-		target.rect(270, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-		target.image(mouseStyle.clear, 280, 10, 25, 25),
-	).attr({
-		__TYPE__: 'clear',
-		class: classNames('mouse', 'wbTool', 'clear', className),
-	}).mousedown(function() {
-		this.select('.whiteBoardBG').attr({
-			fill: selectFill,
-		});
-		if (typeof onDeleteChange === 'function') {
-			onDeleteChange();
-		}
-	}).mouseup(function () {
-		this.select('.whiteBoardBG').attr({
-			fill,
-		});
-	})
-		.dblclick(function () {
-			// 双击删全部
-			if (typeof onDeleteChange === 'function') {
-				onDeleteChange(true);
-			}
-		});
-  const drag = target.group(
-    target.rect(315, 0, 45, 45).attr({ class: 'whiteBoardBG', fill, fillOpacity: 1 }),
-    target.image(mouseStyle.drag, 325, 10, 25, 25),
-  ).mousedown(function() {
-      state.isDrag = true;
-      this.select('.whiteBoardBG').attr({
-        fill: selectFill,
-      });
-    }).mouseup(function () {
-      state.isDrag = false;
-      this.select('.whiteBoardBG').attr({
-        fill,
-      });
-    });
-  group.add(bg, pen, text, rect, circle, selectI, color, clear, drag, seting);
+
 	seting.remove();
-	function select() {
-		group.selectAll('.wbTool .whiteBoardBG').attr({
-			fill,
-		});
-		this.select('.whiteBoardBG').attr({
-			fill: selectFill,
-		});
-		this.attr({
-			__CONF__: JSON.stringify(state.config),
-		});
-		const attr = this.attr();
-		if (typeof onSelect === 'function') {
-			onSelect(attr);
-		}
-		if (attr.__TYPE__ === 'color') {
-			group.add(seting);
-		} else {
-			seting.remove();
-			seting.data('show', false);
-		}
-	}
+
   return {
 	  layer: group,
     handleReset() {

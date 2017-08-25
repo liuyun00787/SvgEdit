@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { createPath, createText, createRect, createCircle } from '../tools';
+import { createPath, createText, createRect, createCircle, createImage } from '../tools';
 
 Snap.plugin((Snap, Element) => {
   const elproto = Element.prototype;
@@ -276,9 +276,12 @@ export default (role = 'Broadcaster', { className = '', width = 0, height = 0 },
       if (item.__TYPE__ === 'rect') {
         path = createRect(item, target, isInit);
       }
-      if (item.__TYPE__ === 'circle') {
-        path = createCircle(item, target, isInit);
-      }
+	    if (item.__TYPE__ === 'circle') {
+		    path = createCircle(item, target, isInit);
+	    }
+	    if (item.__TYPE__ === 'image') {
+		    path = createImage({ attr: item, target });
+	    }
       path.group.click(function () {
         if (state.isDraw) {
           return;

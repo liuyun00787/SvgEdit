@@ -8,7 +8,11 @@ class Broadcaster extends React.Component {
   constructor(props) {
     super(props);
 	  this.role = 'Broadcaster';
-    this.state = {};
+    this.state = {
+    	images: [],
+    };
+	  this.upload = {};
+	  this.images = [];
     this.historyItems = [];
     this.PrevItems = [];
     this.selectItem = null;
@@ -30,10 +34,20 @@ class Broadcaster extends React.Component {
 		  }
 	  }
   }
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
-    if (NWidth !== width || NHeight !== height || NClassName !== className) {
+	  if (nextState.images.length !== this.images.length) {
+		  if (this.whiteBoardLayer) {
+		  	const newImages = nextState.images[nextState.images.length - 1] || {};
+			  this.whiteBoardLayer.handleDraw({
+				  ...newImages,
+				  __TYPE__: 'image',
+			  });
+		  }
+		  this.images = [].concat(nextState.images);
+	  }
+	  if (NWidth !== width || NHeight !== height || NClassName !== className) {
 	    return true;
     }
     return false;
@@ -76,39 +90,40 @@ class Broadcaster extends React.Component {
 	      },
       });
 			// 白板工具层
-      this.wBToolsLayer = createWBToolsLayer(role, {
-        x: 0,
-	      y: 0,
-      }, svg, {
-      	onColorChange: (config) => {
-      		this.whiteBoardLayer.handleSetConfig(config);
-	      },
-	      onSelect: (info) => {
-		      const { onWbToolsChange } = that.props;
-		      const { whiteBoardLayer } = that;
-		      const { __TYPE__, __CONF__ } = info;
-		      whiteBoardLayer.handleSetTools(__TYPE__, __CONF__);
-		      if (typeof onWbToolsChange === 'function') {
-			      onWbToolsChange(info);
-		      }
-	      },
-	      onDeleteChange: (clearAll) => {
-		      const { whiteBoardLayer } = that;
-		      if (whiteBoardLayer) {
-		      	if (clearAll) {
-				      whiteBoardLayer.handleDelete();
-			      } else if (whiteBoardLayer.getIsSelect()) {
-				      whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
-			      }
-		      }
-	      },
-	      onDrag(info) {
-		      const { onWbToolsChange } = that.props;
-		      if (typeof onWbToolsChange === 'function') {
-			      onWbToolsChange(info);
-		      }
-	      },
-      });
+	    this.wBToolsLayer = createWBToolsLayer({
+		    role,
+		    attr: { x: 0, y: 0 },
+		    target: svg,
+		    onColorChange: (config) => {
+			    this.whiteBoardLayer.handleSetConfig(config);
+		    },
+		    onSelect: (info) => {
+			    const { onWbToolsChange } = that.props;
+			    const { whiteBoardLayer } = that;
+			    const { __TYPE__, __CONF__ } = info;
+			    whiteBoardLayer.handleSetTools(__TYPE__, __CONF__);
+			    if (typeof onWbToolsChange === 'function') {
+				    onWbToolsChange(info);
+			    }
+		    },
+		    onDeleteChange: (clearAll) => {
+			    const { whiteBoardLayer } = that;
+			    if (whiteBoardLayer) {
+				    if (clearAll) {
+					    whiteBoardLayer.handleDelete();
+				    } else if (whiteBoardLayer.getIsSelect()) {
+					    whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+				    }
+			    }
+		    },
+		    onDrag(info) {
+			    const { onWbToolsChange } = that.props;
+			    if (typeof onWbToolsChange === 'function') {
+				    onWbToolsChange(info);
+			    }
+		    },
+		    handleUpload: this.upload,
+	    });
 			// 鼠标层
       this.mouseLayer = createMouseLayer({
 	      role,
@@ -179,6 +194,7 @@ class Broadcaster extends React.Component {
     }
   };
   render() {
+  	const that = this;
     const { className, width = 500, height = 500 } = this.props;
     const styles = {
       userSelect: 'none',
@@ -186,17 +202,68 @@ class Broadcaster extends React.Component {
 	    cursor: `url(${require('../assets/bitbug_favicon.ico')}), default`,
     };
     return (
-      <svg
-        ref={e => this.svgWrap = e}
-        style={styles}
-        width={width}
-        height={height}
-        className={classNames(
-					'SvgEdit',
-					'Broadcaster',
-					className,
-				)}
-      />
+    	<div
+		    className={classNames(
+			    'SvgEditWrap',
+		    )}
+		    style={{
+			    width,
+			    height,
+		    }}
+	    >
+	      <svg
+	        ref={e => this.svgWrap = e}
+	        style={styles}
+	        width={width}
+	        height={height}
+	        className={classNames(
+						'SvgEdit',
+						'Broadcaster',
+						className,
+					)}
+	      />
+		    <input
+			    type='file'
+			    accept='.svg,.png,.jpg,.jpeg'
+			    style={{
+				    position: 'absolute',
+				    overflow: 'hidden',
+				    zIndex: -1,
+				    width: 0,
+				    height: 0,
+				    opacity: 0,
+			    }}
+			    onChange={(e) => {
+				    const files = e.target.files[0];
+				    const reader = new FileReader();
+				    reader.onload = (function(file) {
+					    return function(e) {
+						    const _ = this;
+						    const image = new Image();
+						    image.onload = function(){
+							    const { images } = that.state;
+							    images.push({
+								    href: _.result,
+								    width: image.width,
+								    height: image.height,
+							    });
+							    that.setState({
+								    images: images,
+							    });
+						    };
+						    image.src = _.result;
+					    };
+				    })(files);
+				    reader.readAsDataURL(files);
+			    }}
+			    ref={e => {
+				    this.upload.select = () => {
+					    e.click();
+				    };
+				    this.upload.target = e;
+			    }}
+		    />
+	    </div>
     );
   }
 }
