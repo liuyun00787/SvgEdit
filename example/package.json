@@ -23,12 +23,8 @@
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "snapsvg": "^0.5.1",
-<<<<<<< HEAD
-    "socket.io-client": "^2.0.3"
-=======
     "socket.io-client": "^2.0.3",
     "svgreact": "^0.1.8"
->>>>>>> 519a52f9e4a57033ff922b1996cb466cd0c75d0e
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",

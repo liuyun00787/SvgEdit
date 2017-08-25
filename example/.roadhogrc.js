@@ -73,6 +73,7 @@ const config = {
   }
 }
 if (Dose) {
+  config.publicPath = './';
   config.outputPath = '../docs';
 }
 export default config;
