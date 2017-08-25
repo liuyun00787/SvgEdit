@@ -1,0 +1,19 @@
+.__TEST_____3zD1x {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.title___rAdhn {
+  padding: 0;
+  margin: 0;
+  background: #ff0;
+  text-align: center;
+}
+
+html, body, #root {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow: hidden!important;
+}
+
