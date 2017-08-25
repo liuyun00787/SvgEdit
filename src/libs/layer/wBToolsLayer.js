@@ -208,7 +208,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						...state.config,
 						strokeWidth: attr.__SIZE__,
 					};
-					pen.attr({ __CONF__: state.config });
+					// pen.attr({ __CONF__: state.config });
 					onColorChange(state.config);
 				})
 			seting.add(color);
