@@ -116,15 +116,20 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						// if (typeof onDeleteChange === 'function') {
 						// 	onDeleteChange(false);
 						// }
-						handleUpload.select({
-							cb({ attr }) {
-								if (typeof handleDraw === 'function') {
-									const path = handleDraw({ attr });
-									// console.log(path, 1111);
-									onDrawChange(path.attr());
+						const that = this;
+						if (!this.uploading) {
+							this.uploading = true;
+							handleUpload.select({
+								cb({ attr }) {
+									if (typeof handleDraw === 'function') {
+										const path = handleDraw({ attr });
+										onDrawChange(path.attr());
+									}
 								}
-							}
-						});
+							});
+							setTimeout(() => that.uploading = false, 500);
+						}
+
 						this.select('.WBToolsBG').attr({
 							fill: selectFill,
 						});

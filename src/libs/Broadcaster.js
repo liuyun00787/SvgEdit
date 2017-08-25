@@ -253,10 +253,11 @@ class Broadcaster extends React.Component {
 						    const files = e.target.files[0];
 						    const reader = new FileReader();
 						    reader.onload = (function(file) {
-							    return function(e) {
+							    return function() {
 								    const _ = this;
 								    const image = new Image();
 								    image.onload = function(){
+									    e.target.value = '';
 									    if (typeof cb === 'function') {
 										    cb({
 											    attr: {

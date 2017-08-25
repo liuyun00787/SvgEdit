@@ -1,6 +1,6 @@
 {
   "name": "svgreact",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "lib/index.js",
   "scripts": {
     "dev": "rm -fr lib && mkdir lib && cp -R ./src/assets ./lib/assets && babel src --watch  -d lib",
