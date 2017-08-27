@@ -111,13 +111,16 @@ class Viewer extends React.Component {
       const svg = this.svg = Snap(this.svgWrap);
       const that = this;
 			// ppt层
-      this.PPTLayer = createPPTLayer(role, {}, svg);
+      this.PPTLayer = createPPTLayer({ role, attr: {}, target: svg });
 			// 白板层
 	    const { clientWidth, clientHeight } = svg.node;
-	    this.whiteBoardLayer = createWhiteBoardLayer(role, {
-		    width: clientWidth,
-		    height: clientHeight,
-	    }, svg, {
+	    this.whiteBoardLayer = createWhiteBoardLayer({
+		    role,
+		    attr: {
+			    width: clientWidth,
+			    height: clientHeight,
+		    },
+		    target: svg,
 		    onDrawChange(items) {
 			    const { onDrawChange } = that.props;
 			    if (typeof onDrawChange === 'function') {

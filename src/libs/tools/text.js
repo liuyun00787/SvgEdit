@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDrawChange, handleShow }) => {
+export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDrawChange, handleShow, handleHide }) => {
 	const after = ' | ';
 	const path = target.paper.text(attr.x, attr.y, `${attr.text || '' } ${after}`).attr({
 		...attr,
@@ -26,7 +26,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 				text,
 				cb(text = '') {
 					const T = text + after;
-					path.attr({ text: T, __TEXT__: T.replace(after, '') });
+					path.attr({ text: T, __TEXT__: T.replace(after, '') || ' ' });
 					if (typeof onDrawChange === 'function') {
 						onDrawChange(path);
 					}
@@ -35,7 +35,12 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 					}
 				},
 				blurCB() {
-					path.attr({ text: path.attr('__TEXT__') });
+					const text = path.attr('__TEXT__');
+					path.attr({ text });
+					if (!(text || ' ').replace(/(^\s*)|(\s*$)/g, '') && typeof handleHide === 'function') {
+						handleHide();
+						path.remove();
+					}
 				}
 			});
 		}

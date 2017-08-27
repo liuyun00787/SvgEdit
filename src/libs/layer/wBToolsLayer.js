@@ -39,8 +39,8 @@ const tools = [
 	},
 ];
 
-export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDrawChange, onDeleteChange, handleUpload, handleDraw, handleHideItem }) => {
-  const state = {
+export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDrawChange, onDeleteChange, handleUpload, handleDraw, handleHideItem }) => {
+	const state = {
     isDrag: false,
 	  config: {
 		  strokeWidth: 5,
@@ -92,24 +92,21 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 					__TYPE__: item.name,
 					__CONF__: JSON.stringify(state.config),
 				})
+				.mouseover(function() {
+
+				})
+				.mouseout(function() {
+
+				})
 				.click(function() {
 					const { __TYPE__ } = this.attr();
-					seting.remove();
 					if (typeof handleHideItem === 'function') {
 						handleHideItem();
 					}
+					if (__TYPE__ === 'color') {
+						return;
+					}
 					if (__TYPE__ === 'clear') {
-						if (typeof onDeleteChange === 'function') {
-							onDeleteChange(false);
-						}
-						this.select('.WBToolsBG').attr({
-							fill: selectFill,
-						});
-						setTimeout(() => {
-							this.select('.WBToolsBG').attr({
-								fill,
-							});
-						}, 100);
 						return;
 					}
 					if (__TYPE__ === 'images') {
@@ -155,19 +152,24 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 					if (typeof onSelect === 'function') {
 						onSelect(attr);
 					}
-					if (attr.__TYPE__ === 'color') {
-						group.add(seting);
-					} else {
-						seting.data('show', false);
-					}
 				})
 				.mousedown(function() {
 					const { __TYPE__ } = this.attr();
+					seting.remove();
 					if (__TYPE__ === 'drag') {
 						state.isDrag = true;
 						this.select('.WBToolsBG').attr({
 							fill: selectFill,
 						});
+					}
+					if (__TYPE__ === 'color') {
+						group.add(seting);
+					}
+					if (__TYPE__ === 'clear') {
+						this.select('.WBToolsBG').attr({
+							fill: selectFill,
+						});
+						return;
 					}
 			  })
 				.mouseup(function () {
@@ -178,6 +180,15 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
 						  fill,
 					  });
 				  }
+					if (__TYPE__ === 'clear') {
+						if (typeof onDeleteChange === 'function') {
+							onDeleteChange(false);
+						}
+						this.select('.WBToolsBG').attr({
+							fill,
+						});
+						return;
+					}
 				})
 				.dblclick(function() {
 					const { __TYPE__ } = this.attr();
@@ -193,67 +204,91 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
   group.attr({
     __ID__: group.id,
   });
-	group.add(renderTools(tools, 'X'));
+	group.add(renderTools(tools, orientation));
 
 	const seting = target.group(
-		target.rect(225, 50, 130, 160).attr({ class: 'seting', fill: '#fff', fillOpacity: 1 }),
-	);
-	createColor(['#000', '#0f0', '#f00', '#00f']);
-	createSize([5, 10, 15]);
+		target.rect(225, 50, 130, 160).attr({ class: 'tools-seting', fill: '#fff', fillOpacity: 1 }),
+	)
+		.attr({
+			class: 'tools-setWrap',
+		});
+	createColor(['#000', '#0f0', '#f00', '#00f', '#000', '#0f0', '#f00', '#00f']);
+	createSize([5, 10, 15, 20]);
 	function createSize(sizes) {
 		for (let i = 0; i < sizes.length; i += 1) {
-			const color = target.circle((245 + (i * 30)), 70, (i * 2) + 5)
+			const sizeItem = target.group(
+				target.circle((245 + (i * 30)), 70, (i * 2) + 5)
 				.attr({
 					class: 'seting size-item',
-					__SIZE__: sizes[i],
 					stroke: '#000',
-					strokeWidth: 2,
 					fill: '#000',
-					fillOpacity: 1,
+				}),
+				target.circle((245 + (i * 30)), 70, (i * 2) + 3)
+					.attr({
+						class: 'size-item-on',
+						fill: 'rgba(0,0,0,0)',
+					}),
+			)
+				.attr({
+					__SIZE__: sizes[i],
 				})
 				.click(function() {
 					const attr = this.attr();
-					seting.selectAll('.size-item').attr({
-						stroke: '#000',
+					seting.selectAll('.size-item-on').attr({
+						fill: 'rgba(0,0,0,0)',
 					});
-					this.attr({
-						stroke: '#0ff',
+					this.select('.size-item-on').attr({
+						fill: '#fff',
 					});
 					state.config = {
 						...state.config,
 						strokeWidth: attr.__SIZE__,
 					};
-					// pen.attr({ __CONF__: state.config });
 					onColorChange(state.config);
 				})
-			seting.add(color);
+			seting.add(sizeItem);
 		}
 	}
 	function createColor(colors) {
+		let index = 0;
+		let X = 0;
+		let Y = 0;
 		for (let i = 0; i < colors.length; i += 1) {
-			const color = target.circle((245 + (i * 30)), 100, 10)
+			if (i % 4 === 0) {
+				index += 1;
+			}
+			X = 245 + ((i + 1) % 4 * 30);
+			console.log(X);
+			Y = 100 + ((index - 1) * 40);
+			seting.add(target.group(
+				target.circle(X, Y, 10)
 				.attr({
-					class: 'seting color-item',
-					stroke: '#000',
-					strokeWidth: 2,
-					__COLOR__: colors[i], fill: colors[i], fillOpacity: 1
+					class: 'color-item',
+					fill: colors[i],
+				}),
+				target.circle(X, Y, 8)
+					.attr({
+						class: 'color-item-on',
+						fill: 'rgba(0,0,0,0)',
+					}),
+			)
+				.attr({
+					__COLOR__: colors[i],
 				})
 				.click(function() {
 					const attr = this.attr();
-					seting.selectAll('.color-item').attr({
-						stroke: '#000',
+					seting.selectAll('.color-item-on').attr({
+						fill: 'rgba(0,0,0,0)',
 					});
-					this.attr({
-						stroke: '#0ff',
+					this.select('.color-item-on').attr({
+						fill: '#fff',
 					});
 					state.config = {
 						...state.config,
 						stroke: attr.__COLOR__,
 					};
-					// pen.attr({ __CONF__: state.config });
 					onColorChange(state.config);
-				})
-			seting.add(color);
+				}));
 		}
 	}
 
@@ -293,5 +328,8 @@ export default ({ role = 'Broadcaster', attr = {}, target, onColorChange, onDrag
         });
       }
     },
+	  hanldeHideSeting() {
+		  seting.remove();
+	  },
   };
 };

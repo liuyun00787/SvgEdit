@@ -62,13 +62,16 @@ class Broadcaster extends React.Component {
 	    const role = this.role;
       const svg = this.svg = new Snap(this.svgWrap);
 			// ppt层
-      this.PPTLayer = createPPTLayer(role, {}, svg);
+      this.PPTLayer = createPPTLayer({ role, attr: {}, target: svg });
 			// 白板层
 	    const { clientWidth, clientHeight } = svg.node;
-      this.whiteBoardLayer = createWhiteBoardLayer(role, {
-        width: clientWidth,
-        height: clientHeight,
-      }, svg, {
+      this.whiteBoardLayer = createWhiteBoardLayer({
+	      role,
+	      attr: {
+	        width: clientWidth,
+	        height: clientHeight,
+	      },
+	      target: svg,
 	      onDrawChange(item) {
 		      const { onDrawChange } = that.props;
 		      if (typeof onDrawChange === 'function') {
@@ -86,7 +89,8 @@ class Broadcaster extends React.Component {
 			// 白板工具层
 	    this.wBToolsLayer = createWBToolsLayer({
 		    role,
-		    attr: { x: 0, y: 0 },
+		    orientation: 'X',
+		    attr: {},
 		    target: svg,
 		    onColorChange: (config) => {
 			    this.whiteBoardLayer.handleSetConfig(config);
@@ -201,8 +205,118 @@ class Broadcaster extends React.Component {
 
     }
   };
+  inputText = (e) => {
+	  let inputListen;
+	  this.textInput.target = e;
+	  this.textInput.select = ({ text = '', cb, blurCB }) => {
+		  const callback = function(e) {
+			  if (typeof cb === 'function') {
+				  cb(e.target.value);
+			  }
+		  };
+		  if (inputListen) {
+			  inputListen.remove();
+			  inputListen = null;
+		  }
+		  inputListen = listen(e, 'input', callback);
+		  listen(e, 'blur', () => {
+			  if (typeof blurCB === 'function') {
+				  blurCB();
+			  }
+			  if (inputListen) {
+				  inputListen.remove();
+				  inputListen = null;
+			  }
+		  });
+		  e.value = text;
+		  e.setSelectionRange(text.length, -1);
+		  e.focus();
+	  };
+  };
+  inputUpload = (e) => {
+	  let changeListen;
+	  this.uploadInput.target = e;
+	  this.uploadInput.select = ({ cb, setUploading }) => {
+		  if (changeListen) {
+			  changeListen.remove();
+			  changeListen = null;
+		  }
+		  changeListen = listen(e, 'change', (e) => {
+			  if (changeListen) {
+				  changeListen.remove();
+				  changeListen = null;
+			  }
+			  const files = e.target.files[0];
+			  if (files.size / 1024 > 1000) {
+				  e.target.value = '';
+				  alert('附件不能大于1M!');
+				  return;
+			  }
+			  const reader = new FileReader();
+			  reader.onload = (function(file) {
+				  return function() {
+					  const _ = this;
+					  const image = new Image();
+					  image.onload = function(){
+						  e.target.value = '';
+						  if (typeof cb === 'function') {
+							  cb({
+								  attr: {
+									  href: _.result,
+									  width: image.width,
+									  height: image.height,
+								  },
+							  });
+						  }
+					  };
+					  image.src = _.result;
+				  };
+			  })(files);
+			  if (files) {
+				  reader.readAsDataURL(files);
+			  }
+		  });
+		  e.click();
+		  if (typeof setUploading === 'function') {
+			  setUploading();
+		  }
+	  };
+  };
+  renderUpLoad = () => {
+  	return (
+		  <input
+			  type='file'
+			  accept='.svg,.png,.jpg,.jpeg'
+			  style={{
+				  position: 'absolute',
+				  top: 0,
+				  left: 0,
+				  overflow: 'hidden',
+				  zIndex: -9999,
+				  width: 0,
+				  height: 0,
+				  opacity: 0,
+			  }}
+			  ref={this.inputUpload}
+		  />
+	  );
+  };
+  renderText = () => {
+  	return (
+		  <input
+			  style={{
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					overflow: 'hidden',
+					zIndex: -9999,
+					opacity: 0,
+			  }}
+			  ref={this.inputText}
+		  />
+	  );
+  };
   render() {
-  	const that = this;
     const { className, width = 500, height = 500 } = this.props;
     const styles = {
       userSelect: 'none',
@@ -210,15 +324,7 @@ class Broadcaster extends React.Component {
 	    cursor: `url(${require('../assets/bitbug_favicon.ico')}), default`,
     };
     return (
-    	<div
-		    className={classNames(
-			    'SvgEditWrap',
-		    )}
-		    style={{
-			    width,
-			    height,
-		    }}
-	    >
+    	<div className={classNames('SvgEditWrap')} style={{ width, height }}>
 	      <svg
 	        ref={e => this.svgWrap = e}
 	        style={styles}
@@ -230,104 +336,8 @@ class Broadcaster extends React.Component {
 						className,
 					)}
 	      />
-		    <input
-			    type='file'
-			    accept='.svg,.png,.jpg,.jpeg'
-			    style={{
-				    position: 'absolute',
-				    overflow: 'hidden',
-				    zIndex: -9999,
-				    width: 0,
-				    height: 0,
-				    opacity: 0,
-			    }}
-			    ref={e => {
-				    let changeListen;
-				    this.uploadInput.target = e;
-				    this.uploadInput.select = ({ cb, setUploading }) => {
-					    if (changeListen) {
-						    changeListen.remove();
-						    changeListen = null;
-					    }
-					    changeListen = listen(e, 'change', (e) => {
-						    if (changeListen) {
-							    changeListen.remove();
-							    changeListen = null;
-						    }
-						    const files = e.target.files[0];
-						    if (files.size / 1024 > 1000) {
-							    e.target.value = '';
-							    alert('附件不能大于1M!');
-						    	return;
-						    }
-						    const reader = new FileReader();
-						    reader.onload = (function(file) {
-							    return function() {
-								    const _ = this;
-								    const image = new Image();
-								    image.onload = function(){
-									    e.target.value = '';
-									    if (typeof cb === 'function') {
-										    cb({
-											    attr: {
-												    href: _.result,
-												    width: image.width,
-												    height: image.height,
-											    },
-										    });
-									    }
-								    };
-								    image.src = _.result;
-							    };
-						    })(files);
-						    if (files) {
-							    reader.readAsDataURL(files);
-						    }
-					    });
-					    e.click();
-					    if (typeof setUploading === 'function') {
-						    setUploading();
-					    }
-				    };
-			    }}
-		    />
-		    <input
-			    style={{
-				    position: 'absolute',
-				    overflow: 'hidden',
-				    zIndex: -9999,
-				    width: 0,
-				    height: 0,
-				    opacity: 0,
-			    }}
-			    ref={e => {
-				    let inputListen;
-				    this.textInput.target = e;
-				    this.textInput.select = ({ text = '', cb, blurCB }) => {
-					    const callback = (e) => {
-					    	if (typeof cb === 'function') {
-							    cb(e.target.value);
-						    }
-					    };
-					    if (inputListen) {
-						    inputListen.remove();
-						    inputListen = null;
-					    }
-					    inputListen = listen(e, 'input', callback);
-					    listen(e, 'blur', () => {
-						    if (typeof blurCB === 'function') {
-							    blurCB();
-						    }
-						    if (inputListen) {
-							    inputListen.remove();
-							    inputListen = null;
-						    }
-					    });
-					    e.value = text;
-					    e.focus();
-				    };
-			    }}
-		    />
+		    { this.renderText() }
+		    { this.renderUpLoad() }
 	    </div>
     );
   }
