@@ -258,7 +258,6 @@ export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, on
 				index += 1;
 			}
 			X = 245 + ((i + 1) % 4 * 30);
-			console.log(X);
 			Y = 100 + ((index - 1) * 40);
 			seting.add(target.group(
 				target.circle(X, Y, 10)

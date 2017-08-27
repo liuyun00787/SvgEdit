@@ -122,7 +122,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 	  if (drawPath.attr('__TYPE__') === 'text') {
 	  	const dd = Object.assign({}, state.config);
 		  dd.fill = dd.stroke;
-		  switch (dd.strokeWidth) {
+		  switch (Math.abs(dd.strokeWidth)) {
 			  case 5: {
 				  dd.fontSize = 16;
 			  	break;
@@ -133,6 +133,10 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 			  }
 			  case 15: {
 				  dd.fontSize = 20;
+				  break;
+			  }
+			  case 20: {
+				  dd.fontSize = 25;
 				  break;
 			  }
 			  default: {
