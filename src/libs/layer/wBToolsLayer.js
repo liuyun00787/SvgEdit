@@ -38,7 +38,21 @@ const tools = [
 		icon: require('../../assets/icon-drag.svg'),
 	},
 ];
-
+const sizes = [5, 10, 15, 20];
+const colors = [
+	'#000',
+	'#194D33',
+	'#E91E63',
+	'#9C27B0',
+	'#673AB7',
+	'#3F51B5',
+	'#2196F3',
+	'#03A9F4',
+	'#00BCD4',
+	'#FFEB3B',
+	'#FF5722',
+	'#795548',
+];
 export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, onColorChange, onDrag, onSelect, onDrawChange, onDeleteChange, handleUpload, handleDraw, handleHideItem }) => {
 	const state = {
     isDrag: false,
@@ -212,8 +226,8 @@ export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, on
 		.attr({
 			class: 'tools-setWrap',
 		});
-	createColor(['#000', '#0f0', '#f00', '#00f', '#000', '#0f0', '#f00', '#00f']);
-	createSize([5, 10, 15, 20]);
+	createColor(colors);
+	createSize(sizes);
 	function createSize(sizes) {
 		for (let i = 0; i < sizes.length; i += 1) {
 			const sizeItem = target.group(
