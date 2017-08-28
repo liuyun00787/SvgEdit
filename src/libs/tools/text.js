@@ -38,6 +38,10 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 					const text = path.attr('__TEXT__');
 					path.attr({ text });
 					if (!(text || ' ').replace(/(^\s*)|(\s*$)/g, '') && typeof handleHide === 'function') {
+						path.attr({ text: ' ', __TEXT__: ' ' });
+						if (typeof onDrawChange === 'function') {
+							onDrawChange(path);
+						}
 						handleHide();
 						path.remove();
 					}
