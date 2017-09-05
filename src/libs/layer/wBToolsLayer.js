@@ -63,10 +63,10 @@ export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, on
   };
   const className = attr.class;
 	let origTransform;
+	const toolsWidth = tools.length * 45;
   const group = target.group({
     class: classNames('wBToolsLayer', attr.class),
-    width: 355,
-    height: 50,
+    width: toolsWidth,
     transform: `matrix(1,0,0,1,${attr.x || 0},${attr.y || 0})`,
   });
   if (role === 'Broadcaster') {

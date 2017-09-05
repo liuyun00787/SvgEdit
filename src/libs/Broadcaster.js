@@ -23,7 +23,7 @@ class Broadcaster extends React.Component {
   componentDidMount() {
     this.timeoutInit = setTimeout(() => {
       this.init();
-    }, 100);
+    }, 500);
   }
   componentWillReceiveProps(nextProps) {
 	  const { width, height } = this.props;
@@ -137,13 +137,13 @@ class Broadcaster extends React.Component {
 		    },
 	    });
 			// 鼠标层
-      this.mouseLayer = createMouseLayer({
+			this.mouseLayer = createMouseLayer({
 	      role,
 	      attr: {
 		      class: `mouse-${role}`,
 	      },
 	      target: svg,
-      });
+			});
 	    this.keyboard('bind');
 			// 初始画笔items
       this.initDraw();
@@ -321,7 +321,8 @@ class Broadcaster extends React.Component {
     const styles = {
       userSelect: 'none',
       position: 'relative',
-	    cursor: `url(${require('../assets/bitbug_favicon.ico')}), default`,
+	    // cursor: 'crosshair',
+	    // cursor: `url(${require('../assets/bitbug_favicon.ico')}), default`,
     };
     return (
     	<div className={classNames('SvgEditWrap')} style={{ width, height }}>

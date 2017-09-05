@@ -13,6 +13,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDrawChange }) => {
 	}).drag(
 		function (dx, dy) {
 			// if (!state.isDrag) return;
+			console.log(dx, dy);
 			const { selectItem } = state;
 			const transform = this.data('origTransform') + (this.data('origTransform') ? 'T' : 't') + [dx, dy];
 			this.attr({
