@@ -38,6 +38,10 @@ console.log('------------------------------------------');
 const config = {
   "entry": "src/index.js",
   // "hash": true,
+  "extraBabelIncludes": [
+    "../src/",
+    "../lib/"
+  ],
   "define": {
     "__ENV__": __ENV__,
     "__VERSION__": __VERSION__
@@ -45,30 +49,16 @@ const config = {
   "env": {
     "development": {
       "extraBabelPlugins": [
-        "dva-hmr",
+        // "dva-hmr",
         "transform-runtime",
-        ["import", { "libraryName": "antd", "style": "css" }]
+        // ["import", { "libraryName": "antd", "style": "css" }]
       ]
     },
     "production": {
       "extraBabelPlugins": [
         "transform-runtime",
-        ["import", { "libraryName": "antd", "style": "css" }]
+        // ["import", { "libraryName": "antd", "style": "css" }]
       ]
-    }
-  },
-  "proxy":{
-    // "/api/v1/*": {
-    //     "target": "//test-xteach.class100.com",
-    //     //"target": "http://192.168.102.209:13333",
-    //     "changeOrigin": true,
-    //     "secure":false
-    // },
-    "/ws": {
-      "target": "http://localhost:8080",
-      // "target": "http://192.168.102.220:13333",
-      "changeOrigin": true,
-      "ws": true
     }
   }
 }

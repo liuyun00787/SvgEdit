@@ -1,3 +1,4 @@
+const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = function webpackConfig(webpackConfig, env) {
@@ -9,5 +10,10 @@ module.exports = function webpackConfig(webpackConfig, env) {
       production: true,
     }),
   );
+  webpackConfig.module.rules.push({
+    test: /\.css$/,
+    exclude: [path.resolve(__dirname, './src')],
+    use: ['style-loader', 'css-loader', 'postcss-loader'],
+  });
   return webpackConfig;
 };

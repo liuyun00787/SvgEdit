@@ -3,10 +3,10 @@
   "version": "0.2.3",
   "main": "lib/index.js",
   "scripts": {
-    "dev": "rm -fr lib && mkdir lib && cp -R ./src/assets ./lib/assets && babel src --watch  -d lib",
-    "build": "rm -fr lib && mkdir lib && && cp -R ./src/assets ./lib/assets && babel src -d lib",
-    "lint": "eslint --ext .js",
-    "precommit": "npm run lint && npm run build && cd example && npm run build-docs"
+    "dev": "cd example && npm run start",
+    "build": "rm -fr lib && mkdir lib && cp -R ./src/assets ./lib/assets && babel src -d lib",
+    "build-docs": "npm run build && cd example && npm run build-docs",
+    "precommit": "npm run build"
   },
   "engines": {
     "install-node": "6.9.2"
