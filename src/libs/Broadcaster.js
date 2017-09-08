@@ -35,6 +35,12 @@ class Broadcaster extends React.Component {
 				  height: NHeight,
 			  });
 		  }
+		  if (this.PPTLayer) {
+			  this.PPTLayer.handleSetWH({
+				  width: NWidth,
+				  height: NHeight,
+			  });
+		  }
 	  }
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -61,10 +67,16 @@ class Broadcaster extends React.Component {
 	    const that = this;
 	    const role = this.role;
       const svg = this.svg = new Snap(this.svgWrap);
-			// ppt层
-      this.PPTLayer = createPPTLayer({ role, attr: {}, target: svg });
-			// 白板层
 	    const { clientWidth, clientHeight } = svg.node;
+	    // ppt层
+      this.PPTLayer = createPPTLayer({ role,
+	      attr: {
+		      width: clientWidth,
+		      height: clientHeight,
+	      },
+	      target: svg,
+      });
+			// 白板层
       this.whiteBoardLayer = createWhiteBoardLayer({
 	      role,
 	      attr: {

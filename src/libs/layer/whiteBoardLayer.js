@@ -13,9 +13,9 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     downX: 0,
     downY: 0,
     selectItem: null,
-    isDraw: true,
+    isDraw: false,
     isSelect: false,
-    tools: 'path',
+    tools: 'select',
 	  config: {},
   };
   const group = target.group({
@@ -31,9 +31,10 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
   group.attr({
     __ID__: group.id,
   });
-
-  group.add(whiteBoardBG, wbItemWrap.group);
-  group.mousedown(function (e) {
+	console.log('==============')
+  group.add(wbItemWrap.group);
+	whiteBoardBG.remove();
+	group.mousedown(function (e) {
 	  if (target.select('.tools-setWrap')) {
 		  target.select('.tools-setWrap').remove();
 	  }
@@ -152,7 +153,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     group.add(drawPath);
     onDrawChange(drawPath);
   });
-  group.mousemove(function (e) {
+	group.mousemove(function (e) {
     if (role !== 'Broadcaster') return;
     const { isDraw, tools } = state;
     const { isActive } = this.data();
@@ -187,7 +188,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     }
     onDrawChange(state.selectItem);
   });
-  group.mouseup(function () {
+	group.mouseup(function () {
     if (role !== 'Broadcaster') return;
     const { isDraw, tools } = state;
     if (isDraw) {
@@ -199,7 +200,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 	  }
     this.data('isActive', false);
   });
-  group.dblclick(function () {
+	group.dblclick(function () {
     if (role !== 'Broadcaster') return;
     wbItemWrap.handleHide();
     state.selectItem = null;
@@ -261,7 +262,9 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 	      state.tools = tools;
 	      state.isDraw = false;
         state.isSelect = true;
+	      whiteBoardBG.remove();
       } else {
+	      group.add(whiteBoardBG);
       	if (config) {
 		      state.config = JSON.parse(config);
 	      }

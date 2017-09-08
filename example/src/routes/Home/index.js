@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './IndexPage.less';
-import { Broadcaster, Viewer } from '../../../../lib/index';
+import { Broadcaster, Viewer } from '../../../../src';
 
 class _TEST__ extends React.Component {
   constructor(props) {

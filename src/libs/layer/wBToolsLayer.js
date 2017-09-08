@@ -3,6 +3,7 @@ import classNames from 'classnames';
 const tools = [
 	{
 		name: 'select',
+		_default_: true,
 		icon: require('../../assets/icon-select.svg'),
 	},
 	{
@@ -98,7 +99,7 @@ export default ({ orientation = 'X', role = 'Broadcaster', attr = {}, target, on
 		return tools.map((item, index) => {
 			const X = index * 45;
 			return target.group(
-				target.rect(type === 'X' ? X : 0, type === 'Y' ? X : 0, 45, 45).attr({ class: 'WBToolsBG', fill, fillOpacity: .4 }),
+				target.rect(type === 'X' ? X : 0, type === 'Y' ? X : 0, 45, 45).attr({ class: 'WBToolsBG', fill: item._default_ ? selectFill : fill, fillOpacity: .4 }),
 				target.image(item.icon, type === 'X' ? X + 10 : 10, type === 'Y' ? X + 10 : 10, 25, 25),
 			)
 				.attr({
