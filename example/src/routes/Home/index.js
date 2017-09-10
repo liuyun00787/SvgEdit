@@ -35,7 +35,7 @@ class _TEST__ extends React.Component {
   }
   renderB = (className) => {
     const { dispatch, socket } = this.props;
-    const { drawItems, selectItem, mouseInfo, wBToolsInfo } = socket;
+    const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
     return (
       <Broadcaster
         className={className}
@@ -57,12 +57,17 @@ class _TEST__ extends React.Component {
         onDeleteChange={(item) => {
           dispatch({ type: 'socket/deleteChange', item });
         }}
+        pptConfig={{
+          onPlayChange(paused) {
+            dispatch({ type: 'socket/playChagne', paused });
+          }
+        }}
       />
     );
   };
   renderV = () => {
     const { socket } = this.props;
-    const { drawItems, selectItem, mouseInfo, wBToolsInfo } = socket;
+    const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
     return (
       <Viewer
         items={drawItems || []}
@@ -71,6 +76,7 @@ class _TEST__ extends React.Component {
         selectItem={selectItem}
         mouseInfo={mouseInfo}
         wBToolsInfo={wBToolsInfo}
+        pptConfig={pptConfig}
       />
     );
   };

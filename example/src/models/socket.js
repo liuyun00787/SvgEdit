@@ -14,10 +14,17 @@ export default {
     drawI: false,
     selectItem: undefined,
     wBToolsInfo: {},
+    pptConfig: {
+      paused: true,
+    },
   },
   reducers: {
     initState(state, { mouse, wbTools, drawList }) {
       return { ...state, fetching: false, drawItems: JSON.parse(drawList) || [], wBToolsInfo: JSON.parse(wbTools) || {}, mouseInfo: JSON.parse(mouse) || {},  }
+    },
+    playChagne(state, { paused }) {
+      console.log(111111, paused);
+      return { ...state, pptConfig: { ...state.pptConfig, paused } };
     },
     setWbTools(state, { wBToolsInfo }) {
       return { ...state, wBToolsInfo: { ...state.wBToolsInfo, ...wBToolsInfo } };

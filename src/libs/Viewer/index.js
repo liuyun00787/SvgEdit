@@ -2,7 +2,10 @@ import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
 import classNames from 'classnames';
 import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
-import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from './layer';
+import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.js';
+import '../video.js/video-js.min.css';
+import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';
+import './style.css';
 
 class Viewer extends React.Component {
   constructor(props) {
@@ -21,8 +24,8 @@ class Viewer extends React.Component {
     }, 100);
   }
   componentWillReceiveProps(nextProps) {
-	  const { width, height, mouseInfo, items, wBToolsInfo } = this.props;
-	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {} } = nextProps;
+	  const { width, height, mouseInfo, items, wBToolsInfo, pptConfig = {} } = this.props;
+	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {}, pptConfig: nextPptConfig = {} } = nextProps;
 	  if (NWidth !== width || NHeight !== height) {
 		  if (this.whiteBoardLayer) {
 			  this.whiteBoardLayer.handleSetWH({
@@ -92,6 +95,15 @@ class Viewer extends React.Component {
         }
       }
     }
+    if (this.globalPlayer) {
+			if (pptConfig.paused !== nextPptConfig.paused) {
+				if (nextPptConfig.paused) {
+					this.globalPlayer.pause();
+				} else {
+					this.globalPlayer.play();
+				}
+			}
+    }
   }
   shouldComponentUpdate(nextProps) {
 	  const { width, height, className } = this.props;
@@ -117,6 +129,8 @@ class Viewer extends React.Component {
       const svg = this.svg = Snap(this.svgWrap);
       const that = this;
 	    const { clientWidth, clientHeight } = svg.node;
+	    // 初始video
+	    const globalPlayer = this.initVideo();
 	    // ppt层
       this.PPTLayer = createPPTLayer({ role,
 	      attr: {
@@ -200,6 +214,49 @@ class Viewer extends React.Component {
       }
     }
   };
+	renderVideo = () => {
+		return (
+			<div className={"video-js svgVideo-component-wrap global-video-wrap"}>
+				<video
+					ref={e => this.videoDom = e}
+					id="globalVideo-Viewer"
+					className="video-js svgVideo-component global-video"
+					controls
+					preload="auto"
+					poster="//vjs.zencdn.net/v/oceans.png"
+					data-setup='{}'>
+					<source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4" />
+					<source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm" />
+					<source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg" />
+					<p className="vjs-no-js">
+						To view this video please enable JavaScript, and consider upgrading to a
+						web browser that
+						<a href="http://videojs.com/html5-video-support/" target="_blank">
+							supports HTML5 video
+						</a>
+					</p>
+				</video>
+			</div>
+		);
+	};
+	initVideo = () => {
+		if (this.videoDom) {
+			// console.log(this.videoDom, 1111);
+			const options = {};
+			const globalPlayer = this.globalPlayer = videojs(this.videoDom, options, function onPlayerReady() {
+				videojs.log('Your player is ready!');
+
+				// In this context, `this` is the player that was created by Video.js.
+				this.play();
+
+				// How about an event listener?
+				this.on('ended', function() {
+					videojs.log('Awww...over so soon?!');
+				});
+			});
+			return globalPlayer;
+		}
+	};
   render() {
     const { className, width = 500, height = 500 } = this.props;
     const styles = {
@@ -207,17 +264,20 @@ class Viewer extends React.Component {
       position: 'relative',
     };
     return (
-      <svg
-        style={styles}
-        width={width}
-        height={height}
-        className={classNames(
-					'SvgEdit',
-					'Viewer',
-					className,
-				)}
-        ref={e => this.svgWrap = e}
-      />
+	    <div className={classNames('SvgEditWrap')} style={{ width, height }}>
+	      <svg
+	        style={styles}
+	        width={width}
+	        height={height}
+	        className={classNames(
+						'SvgEdit',
+						'Viewer',
+						className,
+					)}
+	        ref={e => this.svgWrap = e}
+	      />
+		    { this.renderVideo() }
+	    </div>
     );
   }
 }
@@ -230,6 +290,7 @@ Viewer.propTypes = {
 	selectItem: PropTypes.object,
 	mouseInfo: PropTypes.object,
 	wBToolsInfo: PropTypes.object,
+	pptConfig: PropTypes.object,
 };
 
 export default Viewer;

@@ -12,6 +12,7 @@ export const createPath = path;
 export const createText = text;
 export const createCircle = circle;
 export const createRect = rect;
+export const createImage = image;
 export const createVideo = video;
 // export const createAudio = audio;
 
