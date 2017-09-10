@@ -68,6 +68,7 @@ class Broadcaster extends React.Component {
 	    const role = this.role;
       const svg = this.svg = new Snap(this.svgWrap);
 	    const { clientWidth, clientHeight } = svg.node;
+
 	    // ppt层
       this.PPTLayer = createPPTLayer({ role,
 	      attr: {
@@ -76,6 +77,7 @@ class Broadcaster extends React.Component {
 	      },
 	      target: svg,
       });
+
 			// 白板层
       this.whiteBoardLayer = createWhiteBoardLayer({
 	      role,

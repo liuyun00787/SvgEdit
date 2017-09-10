@@ -30,6 +30,12 @@ class Viewer extends React.Component {
 				  height: NHeight,
 			  });
 		  }
+		  if (this.PPTLayer) {
+			  this.PPTLayer.handleSetWH({
+				  width: NWidth,
+				  height: NHeight,
+			  });
+		  }
 	  }
     if (this.mouseLayer) {
       const { handleSetPosition } = this.mouseLayer;

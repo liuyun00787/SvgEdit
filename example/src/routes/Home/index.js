@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './IndexPage.less';
+import { Button } from 'antd';
+import './antd.min.css';
 import { Broadcaster, Viewer } from '../../../../src';
 
 class _TEST__ extends React.Component {
@@ -76,11 +78,13 @@ class _TEST__ extends React.Component {
     const { socket } = this.props;
     return (
       <div ref={wrap => this.wrap = wrap} className={styles.__TEST__}>
-        <div style={{ width: this.state.width, height: '100%', background: '#eee', float: 'left' }} className="">
+        <div style={{ position: 'relative', width: this.state.width, height: '100%', background: '#eee', float: 'left' }} className="">
           <h1 className={styles.title}>Broadcaster</h1>
           <div className="">
             {this.renderB('Broadcaster-1')}
           </div>
+          <div className={styles.pptBtnPrev}><Button type="primary">上一页</Button></div>
+          <div className={styles.pptBtnNext}><Button type="primary">下一页</Button></div>
         </div>
         <div style={{ width: this.state.width, height: '100%', float: 'left' }} className="">
           <h1 className={styles.title}>Viewer</h1>

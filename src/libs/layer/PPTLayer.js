@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { createVideo } from '../tools';
 
 export default ({ role = 'Broadcaster', attr = {}, target }) => {
   const group = target.group(attr);
@@ -20,10 +21,14 @@ export default ({ role = 'Broadcaster', attr = {}, target }) => {
 		  __ID__: group.id,
 	  });
   }
+	const video = createVideo({ role, attr: { width: attr.width, height: attr.height }, target });
+	group.add(video.group);
+	video.runVideo();
   return {
 	  layer: group,
 	  handleSetWH: ({ width, height }) => {
 		  PPTBG.attr({ width, height });
+		  video.handleSetWH({ width, height });
 	  },
   };
 };
