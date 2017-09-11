@@ -25,13 +25,13 @@ class _TEST__ extends React.Component {
         this.page = true;
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width: this.wrap.offsetWidth/2, height: this.wrap.offsetHeight,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width: this.wrap.offsetWidth/2, height: this.wrap.offsetHeight,
           },
         });
@@ -72,13 +72,13 @@ class _TEST__ extends React.Component {
       } else {
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width, height,
           },
         });
@@ -94,13 +94,13 @@ class _TEST__ extends React.Component {
       if (!this.page) {
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3145122583,3697178348&fm=173&s=3189BD554C5246C80489FC6E0300807A&w=218&h=146&img.JPEG',
+            href: '/images/w44.jpg',
             width, height,
           },
         });
