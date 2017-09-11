@@ -25,13 +25,13 @@ class _TEST__ extends React.Component {
         this.page = true;
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width: this.wrap.offsetWidth/2, height: this.wrap.offsetHeight,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width: this.wrap.offsetWidth/2, height: this.wrap.offsetHeight,
           },
         });
@@ -56,14 +56,14 @@ class _TEST__ extends React.Component {
         this.Broadcaster.PPTLayer.handleCreatePage({
           type: 'video',
           attr: {
-            href: '/images/videoBG.png',
+            href: './images/videoBG.png',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           type: 'video',
           attr: {
-            href: '/images/videoBG.png',
+            href: './images/videoBG.png',
             width, height,
           },
         });
@@ -72,13 +72,13 @@ class _TEST__ extends React.Component {
       } else {
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width, height,
           },
         });
@@ -94,13 +94,13 @@ class _TEST__ extends React.Component {
       if (!this.page) {
         this.Broadcaster.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           attr: {
-            href: '/images/w44.jpg',
+            href: './images/w44.jpg',
             width, height,
           },
         });
@@ -110,14 +110,14 @@ class _TEST__ extends React.Component {
         this.Broadcaster.PPTLayer.handleCreatePage({
           type: 'video',
           attr: {
-            href: '/images/videoBG.png',
+            href: './images/videoBG.png',
             width, height,
           },
         });
         this.Viewer.PPTLayer.handleCreatePage({
           type: 'video',
           attr: {
-            href: '/images/videoBG.png',
+            href: './images/videoBG.png',
             width, height,
           },
         });
