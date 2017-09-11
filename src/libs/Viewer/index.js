@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import md5 from 'md5';
 import classNames from 'classnames';
-import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
-import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.js';
-import '../video.js/video-js.min.css';
+import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg-min.js';
+import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.min.js';
+// import 'video.js/dist/video-js.min.css';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';
-import './style.css';
+import './Viewer.css';
 
 class Viewer extends React.Component {
   constructor(props) {
@@ -17,11 +17,10 @@ class Viewer extends React.Component {
     this.groupItems = {};
     this.PrevItems = [];
     this.selectItem = null;
+    this.__ID__ = md5(`${new Date() + Math.random()}Viewer`);
   }
   componentDidMount() {
-    this.timeoutInit = setTimeout(() => {
-      this.init();
-    }, 100);
+	  this.init();
   }
   componentWillReceiveProps(nextProps) {
 	  const { width, height, mouseInfo, items, wBToolsInfo, pptConfig = {} } = this.props;
@@ -68,47 +67,47 @@ class Viewer extends React.Component {
       if (NItems.length) {
         if (JSON.stringify(NItems) !== JSON.stringify(this.PrevItems)) {
 	        if (NItems.length < this.PrevItems.length) {
-            const deleteList = this.PrevItems.filter((t) => {
-              return NItems.findIndex(i => i.__ID__ === t.__ID__) === -1;
-            }) || [];
-            if (deleteList.length) {
-              handleDelete(deleteList, true);
-            }
-            this.PrevItems = [].concat(NItems);
-          } else {
-            const { __ID__ } = selectItem;
-            const index = this.PrevItems.findIndex(item => item.__ID__ === __ID__);
-            if (index === -1) {
+          const deleteList = this.PrevItems.filter((t) => {
+            return NItems.findIndex(i => i.__ID__ === t.__ID__) === -1;
+          }) || [];
+          if (deleteList.length) {
+            handleDelete(deleteList, true);
+          }
+          this.PrevItems = [].concat(NItems);
+        } else {
+          const { __ID__ } = selectItem;
+          const index = this.PrevItems.findIndex(item => item.__ID__ === __ID__);
+          if (index === -1) {
             	if (selectItem.__ID__) {
 		            handleDraw(selectItem);
 		            this.PrevItems.push(selectItem);
 	            }
-            } else {
-              const thatItem = handleSelectItem(selectItem.__ID__);
-              this.PrevItems[index] = selectItem;
+          } else {
+            const thatItem = handleSelectItem(selectItem.__ID__);
+            this.PrevItems[index] = selectItem;
 	            thatItem.attr(selectItem);
 	            if (selectItem.__TYPE__ === 'text') {
 	              thatItem.attr({ text: selectItem.__TEXT__ });
-              }
             }
           }
+        }
         }
       }
     }
     if (this.globalPlayer) {
-			if (pptConfig.paused !== nextPptConfig.paused) {
-				if (nextPptConfig.paused) {
-					this.globalPlayer.pause();
-				} else {
-					this.globalPlayer.play();
-				}
-			}
+      if (pptConfig.paused !== nextPptConfig.paused) {
+        if (nextPptConfig.paused) {
+          this.globalPlayer.pause();
+        } else {
+          this.globalPlayer.play();
+        }
+      }
     }
   }
   shouldComponentUpdate(nextProps) {
 	  const { width, height, className } = this.props;
 	  const { width: NWidth, height: NHeight, className: NClassName } = nextProps;
-	  if (NWidth !== width || NHeight !== height || NClassName !== className){
+	  if (NWidth !== width || NHeight !== height || NClassName !== className) {
 		  return true;
 	  }
 	  return false;
@@ -214,49 +213,54 @@ class Viewer extends React.Component {
       }
     }
   };
-	renderVideo = () => {
-		return (
-			<div className={"video-js svgVideo-component-wrap global-video-wrap"}>
-				<video
-					ref={e => this.videoDom = e}
-					id="globalVideo-Viewer"
-					className="video-js svgVideo-component global-video"
-					controls
-					preload="auto"
-					poster="//vjs.zencdn.net/v/oceans.png"
-					data-setup='{}'>
-					<source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4" />
-					<source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm" />
-					<source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg" />
-					<p className="vjs-no-js">
+  renderVideo = () => {
+    return (
+      <div className={'video-js svgVideo-component-wrap global-video-wrap'}>
+        <video
+          ref={e => this.videoDom = e}
+          id={this.__ID__}
+          className="video-js svgVideo-component global-video"
+          controls
+          preload="auto"
+          poster="//vjs.zencdn.net/v/oceans.png"
+          data-setup="{}"
+        >
+          <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4" />
+          <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm" />
+          <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg" />
+          <p className="vjs-no-js">
 						To view this video please enable JavaScript, and consider upgrading to a
 						web browser that
 						<a href="http://videojs.com/html5-video-support/" target="_blank">
 							supports HTML5 video
 						</a>
-					</p>
-				</video>
-			</div>
-		);
-	};
-	initVideo = () => {
-		if (this.videoDom) {
-			// console.log(this.videoDom, 1111);
-			const options = {};
-			const globalPlayer = this.globalPlayer = videojs(this.videoDom, options, function onPlayerReady() {
-				videojs.log('Your player is ready!');
+          </p>
+        </video>
+      </div>
+    );
+  };
+  initVideo = () => {
+  	try {
+		  if (this.videoDom) {
+			  // console.log(this.videoDom, 1111);
+			  const options = {};
+			  const globalPlayer = this.globalPlayer = videojs(this.videoDom, options, function onPlayerReady() {
+				  videojs.log('Your player is ready!');
 
-				// In this context, `this` is the player that was created by Video.js.
-				this.play();
+				  // In this context, `this` is the player that was created by Video.js.
+				  // this.play();
 
-				// How about an event listener?
-				this.on('ended', function() {
-					videojs.log('Awww...over so soon?!');
-				});
-			});
-			return globalPlayer;
-		}
-	};
+				  // How about an event listener?
+				  this.on('ended', () => {
+					  videojs.log('Awww...over so soon?!');
+				  });
+			  });
+			  return globalPlayer;
+		  }
+	  } catch (e) {
+  		console.log(e)
+	  }
+  };
   render() {
     const { className, width = 500, height = 500 } = this.props;
     const styles = {
@@ -264,33 +268,33 @@ class Viewer extends React.Component {
       position: 'relative',
     };
     return (
-	    <div className={classNames('SvgEditWrap')} style={{ width, height }}>
-	      <svg
-	        style={styles}
-	        width={width}
-	        height={height}
-	        className={classNames(
+      <div ref={e => this.__SVG__ = { ...this.__SVG__, ...e } } className={classNames('SvgEditWrap')} style={{ width, height }}>
+        <svg
+          style={styles}
+          width={width}
+          height={height}
+          className={classNames(
 						'SvgEdit',
 						'Viewer',
 						className,
 					)}
-	        ref={e => this.svgWrap = e}
-	      />
-		    { this.renderVideo() }
-	    </div>
+          ref={e => this.svgWrap = e}
+        />
+        { this.renderVideo() }
+      </div>
     );
   }
 }
 
 Viewer.propTypes = {
-	className: PropTypes.string,
-	width: PropTypes.number,
-	height: PropTypes.number,
-	items: PropTypes.array,
-	selectItem: PropTypes.object,
-	mouseInfo: PropTypes.object,
-	wBToolsInfo: PropTypes.object,
-	pptConfig: PropTypes.object,
+  className: PropTypes.string,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  items: PropTypes.array,
+  selectItem: PropTypes.object,
+  mouseInfo: PropTypes.object,
+  wBToolsInfo: PropTypes.object,
+  pptConfig: PropTypes.object
 };
 
 export default Viewer;

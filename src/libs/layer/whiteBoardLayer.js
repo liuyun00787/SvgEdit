@@ -245,7 +245,9 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
         }
       } else {
         group.clear();
-        group.add(whiteBoardBG);
+        if (state.tools !== 'select') {
+	        group.add(whiteBoardBG);
+        }
         state.selectItem = null;
         wbItemWrap.handleHide(path);
       }

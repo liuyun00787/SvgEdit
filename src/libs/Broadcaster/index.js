@@ -1,16 +1,18 @@
 import React, { PropTypes } from 'react';
-import is from 'is_js';
+import md5 from 'md5';
 import listen from 'event-listener';
 import classNames from 'classnames';
-import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js';
-import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.js';
-import '../video.js/video-js.min.css';
+import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg-min.js';
+import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.min.js';
+import '../../../node_modules/video.js/dist/video-js.min.css';
+// import 'video.js/dist/video-js.min.css';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';
-import './style.css';
+import './Broadcaster.css';
 
 class Broadcaster extends React.Component {
   constructor(props) {
     super(props);
+	  this.__SVG__ = {};
 	  this.role = 'Broadcaster';
     this.state = {
     	images: [],
@@ -22,11 +24,10 @@ class Broadcaster extends React.Component {
     this.historyItems = [];
     this.PrevItems = [];
     this.selectItem = null;
+	  this.__ID__ = md5(`${new Date() + Math.random()}Broadcaster`);
   }
   componentDidMount() {
-    this.timeoutInit = setTimeout(() => {
-      this.init();
-    }, 500);
+	  this.init();
   }
   componentWillReceiveProps(nextProps) {
 	  const { width, height } = this.props;
@@ -69,7 +70,7 @@ class Broadcaster extends React.Component {
     try {
 	    const that = this;
 	    const role = this.role;
-	    const { pptConfig } = this.props;
+	    const { pptConfig = {} } = this.props;
 	    const svg = this.svg = new Snap(this.svgWrap);
 	    const { clientWidth, clientHeight } = svg.node;
 			// 初始video
@@ -343,7 +344,7 @@ class Broadcaster extends React.Component {
   		<div className={"video-js svgVideo-component-wrap global-video-wrap"}>
 		    <video
 			    ref={e => this.videoDom = e}
-				  id="globalVideo-Broadcaster"
+				  id={this.__ID__}
 				  className="video-js svgVideo-component global-video"
 				  controls
 				  preload="auto"
@@ -364,21 +365,26 @@ class Broadcaster extends React.Component {
 	  );
   };
   initVideo = () => {
-  	if (this.videoDom) {
-  		// console.log(this.videoDom, 1111);
-  		const options = {};
-		  const globalPlayer = this.globalPlayer = videojs(this.videoDom, options, function onPlayerReady() {
-			  videojs.log('Your player is ready!');
+  	// return;
+  	try {
+		  if (this.videoDom) {
+			  // console.log(this.videoDom, 1111);
+			  const options = {};
+			  const globalPlayer = this.globalPlayer = videojs(this.videoDom, options, function onPlayerReady() {
+				  videojs.log('Your player is ready!');
 
-			  // In this context, `this` is the player that was created by Video.js.
-			  this.play();
+				  // In this context, `this` is the player that was created by Video.js.
+				  // this.play();
 
-			  // How about an event listener?
-			  this.on('ended', function() {
-				  videojs.log('Awww...over so soon?!');
+				  // How about an event listener?
+				  this.on('ended', function() {
+					  videojs.log('Awww...over so soon?!');
+				  });
 			  });
-		  });
-		  return globalPlayer;
+			  return globalPlayer;
+		  }
+	  } catch (e) {
+			console.log(e);
 	  }
   };
   render() {
@@ -423,7 +429,7 @@ Broadcaster.propTypes = {
   onDrawChange: PropTypes.func,
   onDeleteChange: PropTypes.func,
   onWbToolsChange: PropTypes.func,
-	pptConfig:  PropTypes.object,
+	pptConfig:  PropTypes.object
 };
 
 export default Broadcaster;
