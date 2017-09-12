@@ -24,7 +24,7 @@ class _TEST__ extends React.Component {
     if (this.wrap) {
       setTimeout(() => {
         const width = this.wrap.offsetWidth/2;
-        const height = this.wrap.offsetHeight;
+        const height = this.wrap.offsetHeight - 36;
         this.setState({
           width,
           height,
@@ -49,7 +49,7 @@ class _TEST__ extends React.Component {
     window.addEventListener('resize', () => {
       if (this.wrap) {
         const width = this.wrap.offsetWidth/2;
-        const height = this.wrap.offsetHeight;
+        const height = this.wrap.offsetHeight - 36;
         this.setState({
           width,
           height,
@@ -153,16 +153,15 @@ class _TEST__ extends React.Component {
     const { dispatch, socket } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
     const { scale, width, height } = this.state;
-    const t = Rematrix.translate(960/2, 540/2);
+    const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
-    // console.log(t);
     const product = [t,s].reduce(Rematrix.multiply)
     const style = {
       width: 960,
       height: 540,
-      // transform: `matrix3d(${product.join(',')})`,
-      transform: `scale(${scale.x}, ${scale.y})`,
-      transformOrigin: 'left top',
+      transform: `matrix3d(${product.join(',')})`,
+      // transform: `scale(${scale.x}, ${scale.y})`,
+      transformOrigin: 'top left',
     };
     return (
       <div
@@ -203,16 +202,15 @@ class _TEST__ extends React.Component {
     const { socket } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
     const { scale, width, height } = this.state;
-    const t = Rematrix.translate(width/2, height/2);
+    const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
-    // console.log(t);
-    const product = [s].reduce(Rematrix.multiply)
+    const product = [t,s].reduce(Rematrix.multiply)
     const style = {
       width: 960,
       height: 540,
-      // transform: `matrix3d(${product.join(',')})`,
-      transform: `scale(${scale.x}, ${scale.y})`,
-      transformOrigin: 'left top',
+      transform: `matrix3d(${product.join(',')})`,
+      // transform: `scale(${scale.x}, ${scale.y})`,
+      transformOrigin: 'top left',
     };
     return (
       <div
