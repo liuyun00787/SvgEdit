@@ -28,7 +28,7 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 		});
 	};
 	const handleCreatePage = ({ type = 'image', item = {} }) => {
-		const groupPage = target.group({}).attr({
+		const groupPage = target.group({ opacity: 0 }).attr({
 			class: classNames('page', `page-${item.page}`),
 			__PAGETYPE__: type,
 		});
@@ -57,11 +57,10 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 			page = createImage({ attr, target });
 			page.group.click(function(e) {
 				if (globalPlayer) {
+					groupPage.attr({ opacity: 0 });
 					if (globalPlayer.paused()) {
-						group.attr({ opacity: 0 });
 						globalPlayer.play();
 					} else {
-						group.attr({ opacity: 1 });
 						globalPlayer.pause();
 					}
 					if (typeof onPlayChange === 'function') {
@@ -85,19 +84,20 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 		if (group.select(`.page-${state.page}`) && group.select(`.page-${state.page}`).PageToFront) {
 			setState({ page }, () => {
 				if (globalPlayer) {
-					group.attr({ opacity: 1 });
 					globalPlayer.pause();
 					if (typeof onPlayChange === 'function') {
 						onPlayChange(true);
 					}
 				}
-				group.select(`.page-${state.page}`).PageToFront();
+				// group.selectAll('.page-content').attr({ opacity: 1 });
+				group.selectAll('.page').attr({ opacity: 0 });
+				group.select(`.page-${state.page}`).attr({ opacity: 1 }).PageToFront();
 			})
 		}
 	};
 	init(ppt);
 	if (group.select(`.page-${state.page}`)) {
-		group.select(`.page-${state.page}`).attr({ x: 0, y: 0 }).PageToFront();
+		group.select(`.page-${state.page}`).attr({ x: 0, y: 0, opacity: 1 }).PageToFront();
 	}
 	return {
 	  layer: group,

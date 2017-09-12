@@ -351,10 +351,8 @@ class Broadcaster extends React.Component {
 				  preload="auto"
 				  poster="//vjs.zencdn.net/v/oceans.png"
 				  data-setup='{}'>
-				  <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4" />
-				  <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm" />
-				  <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg" />
-				  <p className="vjs-no-js">
+			    <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
+			    <p className="vjs-no-js">
 					  To view this video please enable JavaScript, and consider upgrading to a
 					  web browser that
 					  <a href="http://videojs.com/html5-video-support/" target="_blank">

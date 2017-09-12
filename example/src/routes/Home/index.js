@@ -48,22 +48,48 @@ class _TEST__ extends React.Component {
     });
   }
   handlePrev = () => {
+    let __PAGE__ = 1;
     if (this.Broadcaster) {
-      const { PPTLayer } = this.Broadcaster;
+      const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
       if (PPTLayer) {
         const { page } = PPTLayer.getState();
-        const newPage = page - 1 >= 1 ? page - 1 : 1;
-        PPTLayer.goTo(newPage)
+        __PAGE__ = page - 1 >= 1 ? page - 1 : 1;
+        PPTLayer.goTo(__PAGE__)
+      }
+      if (whiteBoardLayer) {
+        whiteBoardLayer.handleDelete();
+      }
+    }
+    if (this.Viewer) {
+      const { PPTLayer, whiteBoardLayer } = this.Viewer;
+      if (PPTLayer) {
+        PPTLayer.goTo(__PAGE__)
+      }
+      if (whiteBoardLayer) {
+        whiteBoardLayer.handleDelete();
       }
     }
   };
   handleNext = () => {
+    let __PAGE__ = 1;
     if (this.Broadcaster) {
-      const { PPTLayer } = this.Broadcaster;
+      const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
       if (PPTLayer) {
         const { page, ppt } = PPTLayer.getState();
-        const newPage = page + 1 <= ppt.length ? page + 1 : page;
-        PPTLayer.goTo(newPage)
+        __PAGE__ = page + 1 <= ppt.length ? page + 1 : page;
+        PPTLayer.goTo(__PAGE__)
+      }
+      if (whiteBoardLayer) {
+        whiteBoardLayer.handleDelete();
+      }
+    }
+    if (this.Viewer) {
+      const { PPTLayer, whiteBoardLayer } = this.Viewer;
+      if (PPTLayer) {
+        PPTLayer.goTo(__PAGE__)
+      }
+      if (whiteBoardLayer) {
+        whiteBoardLayer.handleDelete();
       }
     }
   };
@@ -135,6 +161,7 @@ class _TEST__ extends React.Component {
     const { socket, init } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
     const { ppt } = init;
+    pptConfig.ppt = ppt;
     const { scale, width, height } = this.state;
     const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);

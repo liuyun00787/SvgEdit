@@ -100,6 +100,9 @@ class Viewer extends React.Component {
           this.globalPlayer.pause();
         } else {
           this.globalPlayer.play();
+          const { page } = this.PPTLayer.getState();
+          // TODO 临时写法
+          this.PPTLayer.layer.select(`.page-${page}`).attr({ opacity: 0 });
         }
       }
     }
@@ -125,6 +128,7 @@ class Viewer extends React.Component {
   init = () => {
     try {
       const role = this.role;
+      const { pptConfig } = this.props;
       const svg = this.svg = Snap(this.svgWrap);
       const that = this;
 	    const { clientWidth, clientHeight } = svg.node;
@@ -136,6 +140,7 @@ class Viewer extends React.Component {
 		      width: clientWidth,
 		      height: clientHeight,
 	      },
+	      ppt: pptConfig.ppt || [],
 	      target: svg,
       });
 			// 白板层
@@ -225,9 +230,7 @@ class Viewer extends React.Component {
           poster="//vjs.zencdn.net/v/oceans.png"
           data-setup="{}"
         >
-          <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4" />
-          <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm" />
-          <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg" />
+          <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
           <p className="vjs-no-js">
 						To view this video please enable JavaScript, and consider upgrading to a
 						web browser that
