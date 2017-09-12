@@ -12,7 +12,7 @@ import './Broadcaster.css';
 class Broadcaster extends React.Component {
   constructor(props) {
     super(props);
-	  this.__SVG__ = {};
+	  this.__ID__ = md5(`${new Date() + Math.random()}Broadcaster`);
 	  this.role = 'Broadcaster';
     this.state = {
     	images: [],
@@ -24,7 +24,6 @@ class Broadcaster extends React.Component {
     this.historyItems = [];
     this.PrevItems = [];
     this.selectItem = null;
-	  this.__ID__ = md5(`${new Date() + Math.random()}Broadcaster`);
   }
   componentDidMount() {
 	  this.init();
@@ -81,6 +80,7 @@ class Broadcaster extends React.Component {
 		      width: clientWidth,
 		      height: clientHeight,
 	      },
+	      ppt: pptConfig.ppt || [],
 	      target: svg,
 	      globalPlayer,
 	      onPlayChange: pptConfig.onPlayChange,
@@ -176,6 +176,7 @@ class Broadcaster extends React.Component {
       console.log(e);
     }
   };
+  initPPT = () => {};
   initDraw = () => {
     if (this.whiteBoardLayer) {
       const { items = [] } = this.props;
@@ -417,7 +418,6 @@ class Broadcaster extends React.Component {
 }
 
 Broadcaster.propTypes = {
-  role: PropTypes.string,
   className: PropTypes.string,
   width: PropTypes.number,
   height: PropTypes.number,

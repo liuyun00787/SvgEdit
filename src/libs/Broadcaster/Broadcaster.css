@@ -9,6 +9,7 @@
     bottom: 0;
     left: 0;
     margin: auto;
+    background: transparent!important;
 }
 .global-video-wrap.svgVideo-component-wrap{
     position: absolute;
@@ -34,4 +35,7 @@
     height: 100%;
     overflow: hidden;
     background: #000;
+}
+.vjs-control-bar{
+    display: none!important;
 }

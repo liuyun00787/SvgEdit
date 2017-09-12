@@ -10,9 +10,12 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDrawChange }) => {
 		fillOpacity: 0.6,
 		transform: 'matrix(1,0,0,1,-10000,-10000)',
 		class: classNames('WBWrapItem', attr.className),
-	}).drag(
+	})
+		.drag(
 		function (dx, dy) {
 			// if (!state.isDrag) return;
+			// const dx = event.offsetX;
+			// const dy = event.offsetY;
 			const { selectItem } = state;
 			const transform = this.data('origTransform') + (this.data('origTransform') ? 'T' : 't') + [dx, dy];
 			this.attr({

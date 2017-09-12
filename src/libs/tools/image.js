@@ -8,7 +8,7 @@ export default ({ role = 'Broadcaster', attr = {}, target }) => {
 	if (!attr.__ID__) {
 		path.attr({
 			__ID__: path.id,
-			class: classNames('imageItem', path.id),
+			class: classNames('imageItem', attr.class, path.id),
 		});
 	} else {
 		path.attr({

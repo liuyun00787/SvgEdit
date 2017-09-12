@@ -1,31 +1,46 @@
 import classNames from 'classnames';
 import { createItemWrap, createPath, createText, createRect, createCircle, createImage } from '../tools';
-// import { createVideo } from '../tools';
 
-export default ({ role = 'Broadcaster', attr = {}, target, globalPlayer, onPlayChange}) => {
-  const group = target.group(attr);
-	const bg = target.rect(0, 0, 0, 0).attr({ class: 'pptBG', fill: '#ffff00', fillOpacity: 0 }).attr({
-		width: attr.width || 0,
-		height: attr.height || 0,
-	});
-	group.add(bg);
-  if (attr.__ID__) {
-		group.attr({
-			class: classNames('PPTLayer'),
+Snap.plugin((Snap, Element) => {
+	const elproto = Element.prototype;
+	elproto.PageToFront = function () {
+		this.paper.select('.PPTLayer').add(this);
+	};
+});
+
+export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target, globalPlayer, onPlayChange}) => {
+  let state = {
+	  ppt: ppt || [],
+  	page: current,
+  };
+  const setState = (nState = {}, callback) => {
+	  state = {...state, ...nState};
+	  if (typeof callback === 'function') {
+		  callback();
+	  }
+  };
+	const group = target.group(attr).attr({ class: classNames('PPTLayer') });
+	const init = (list = []) => {
+		setState({ ppt: list }, () => {
+			list.map((item, index) => {
+				handleCreatePage({ type: item.type, item });
+			});
 		});
-  } else {
-	  group.attr({
-		  class: classNames('PPTLayer'),
-		  __ID__: group.id,
-	  });
-  }
-	// const video = createVideo({ role, attr: { width: attr.width, height: attr.height }, target });
-	// group.add(video.group);
-	// video.runVideo();
-	const handleCreatePage = ({ type = 'image', attr = {} }) => {
-  	console.log(type);
-		const groupPage = target.group({});
-		group.clear();
+	};
+	const handleCreatePage = ({ type = 'image', item = {} }) => {
+		const groupPage = target.group({}).attr({
+			class: classNames('page', `page-${item.page}`),
+			__PAGETYPE__: type,
+		});
+		const content = item.content || [];
+		const info = content[0] || {};
+		let attr = {
+			href: info.url,
+			width: 960,
+			height: 540,
+			class: 'page-content',
+		};
+		// group.clear();
 		let page;
 		if (globalPlayer) {
 			globalPlayer.pause();
@@ -33,36 +48,65 @@ export default ({ role = 'Broadcaster', attr = {}, target, globalPlayer, onPlayC
 		}
 		if (type === 'image') {
 			page = createImage({ attr, target });
+			groupPage.add(page.group)
+			group.add(groupPage);
+			return groupPage;
 		}
 		if (type === 'video') {
+			// attr.href = require('../../assets/videoPlayBG.png');
 			page = createImage({ attr, target });
-			console.log(page.group);
 			page.group.click(function(e) {
-				console.log(1111)
 				if (globalPlayer) {
-					console.log(globalPlayer.paused())
 					if (globalPlayer.paused()) {
+						group.attr({ opacity: 0 });
 						globalPlayer.play();
 					} else {
+						group.attr({ opacity: 1 });
 						globalPlayer.pause();
 					}
 					if (typeof onPlayChange === 'function') {
 						onPlayChange(globalPlayer.paused());
 					}
 				}
-				console.log(e.offsetX, e.offsetY)
+			});
+			groupPage.add(page.group)
+			group.add(groupPage);
+			return groupPage;
+		}
+		if (type === 'question') {
+			attr.href = require('../../assets/questionBg.png');
+			page = createImage({ attr, target });
+			groupPage.add(page.group)
+			group.add(groupPage);
+			return groupPage;
+		}
+	};
+	const goTo = (page) => {
+		if (group.select(`.page-${state.page}`) && group.select(`.page-${state.page}`).PageToFront) {
+			setState({ page }, () => {
+				if (globalPlayer) {
+					group.attr({ opacity: 1 });
+					globalPlayer.pause();
+					if (typeof onPlayChange === 'function') {
+						onPlayChange(true);
+					}
+				}
+				group.select(`.page-${state.page}`).PageToFront();
 			})
 		}
-		groupPage.add(page.group)
-		group.add(bg, groupPage);
-		return groupPage;
 	};
-  return {
+	init(ppt);
+	if (group.select(`.page-${state.page}`)) {
+		group.select(`.page-${state.page}`).attr({ x: 0, y: 0 }).PageToFront();
+	}
+	return {
 	  layer: group,
-	  handleSetWH({ width, height }) {
-		  bg.attr({ width, height });
-		  // video.handleSetWH({ width, height });
-	  },
+	  init,
 	  handleCreatePage,
+		getState() {
+	  	return state;
+		},
+		setState,
+		goTo,
   };
 };

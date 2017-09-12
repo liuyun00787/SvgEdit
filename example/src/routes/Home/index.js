@@ -21,6 +21,7 @@ class _TEST__ extends React.Component {
 
   componentDidMount() {
     const { dispatch, location, socket } = this.props;
+    console.dir(this.Broadcaster)
     if (this.wrap) {
       setTimeout(() => {
         const width = this.wrap.offsetWidth/2;
@@ -30,18 +31,6 @@ class _TEST__ extends React.Component {
           height,
         });
         this.page = true;
-        this.Broadcaster.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
-        this.Viewer.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
         this.handleScale({ width, height });
       }, 500);
 
@@ -59,80 +48,22 @@ class _TEST__ extends React.Component {
     });
   }
   handlePrev = () => {
-    const { width, height } = this.state;
     if (this.Broadcaster) {
-      console.log(this.Broadcaster );
-      this.Broadcaster.whiteBoardLayer.handleDelete();
-      if (this.page) {
-        this.Broadcaster.PPTLayer.handleCreatePage({
-          type: 'video',
-          attr: {
-            href: './images/videoBG.png',
-            width: 960, height: 540,
-          },
-        });
-        this.Viewer.PPTLayer.handleCreatePage({
-          type: 'video',
-          attr: {
-            href: './images/videoBG.png',
-            width: 960, height: 540,
-          },
-        });
-
-        this.page = false;
-      } else {
-        this.Broadcaster.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
-        this.Viewer.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
-        this.page = true;
+      const { PPTLayer } = this.Broadcaster;
+      if (PPTLayer) {
+        const { page } = PPTLayer.getState();
+        const newPage = page - 1 >= 1 ? page - 1 : 1;
+        PPTLayer.goTo(newPage)
       }
     }
   };
   handleNext = () => {
-    const { width, height } = this.state;
     if (this.Broadcaster) {
-      console.log(this.Broadcaster);
-      this.Broadcaster.whiteBoardLayer.handleDelete();
-      if (!this.page) {
-        this.Broadcaster.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
-        this.Viewer.PPTLayer.handleCreatePage({
-          attr: {
-            href: 'https://ppt-cdn.class100.com/ppts/766/G5L8_1.png',
-            width: 960, height: 540,
-          },
-        });
-
-        this.page = true;
-      } else {
-        this.Broadcaster.PPTLayer.handleCreatePage({
-          type: 'video',
-          attr: {
-            href: './images/videoBG.png',
-            width: 960, height: 540,
-          },
-        });
-        this.Viewer.PPTLayer.handleCreatePage({
-          type: 'video',
-          attr: {
-            href: './images/videoBG.png',
-            width: 960, height: 540,
-          },
-        });
-        this.page = false;
+      const { PPTLayer } = this.Broadcaster;
+      if (PPTLayer) {
+        const { page, ppt } = PPTLayer.getState();
+        const newPage = page + 1 <= ppt.length ? page + 1 : page;
+        PPTLayer.goTo(newPage)
       }
     }
   };
@@ -150,8 +81,9 @@ class _TEST__ extends React.Component {
     })
   };
   renderB = (className) => {
-    const { dispatch, socket } = this.props;
+    const { dispatch, socket, init } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
+    const { ppt } = init;
     const { scale, width, height } = this.state;
     const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
@@ -190,6 +122,7 @@ class _TEST__ extends React.Component {
             dispatch({ type: 'socket/deleteChange', item });
           }}
           pptConfig={{
+            ppt,
             onPlayChange(paused) {
               dispatch({ type: 'socket/playChagne', paused });
             }
@@ -199,8 +132,9 @@ class _TEST__ extends React.Component {
     );
   };
   renderV = () => {
-    const { socket } = this.props;
+    const { socket, init } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
+    const { ppt } = init;
     const { scale, width, height } = this.state;
     const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
@@ -219,6 +153,7 @@ class _TEST__ extends React.Component {
       >
         <Viewer
           ref={e => this.Viewer = e}
+          ppt={ppt}
           items={drawItems || []}
           width={960}
           height={540}

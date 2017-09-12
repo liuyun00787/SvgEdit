@@ -26,18 +26,18 @@ const tools = [
 		name: 'color',
 		icon: require('../../assets/icon-color.svg'),
 	},
-	{
-		name: 'images',
-		icon: require('../../assets/icon-images.svg'),
-	},
+	// {
+	// 	name: 'images',
+	// 	icon: require('../../assets/icon-images.svg'),
+	// },
 	{
 		name: 'clear',
 		icon: require('../../assets/icon-clear.svg'),
 	},
-	{
-		name: 'drag',
-		icon: require('../../assets/icon-drag.svg'),
-	},
+	// {
+	// 	name: 'drag',
+	// 	icon: require('../../assets/icon-drag.svg'),
+	// },
 ];
 const sizes = [5, 10, 15, 20];
 const colors = [
