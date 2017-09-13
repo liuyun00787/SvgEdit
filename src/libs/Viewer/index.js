@@ -149,7 +149,7 @@ class Viewer extends React.Component {
   init = () => {
     try {
       const role = this.role;
-      const { pptConfig } = this.props;
+      const { pptConfig = {} } = this.props;
       const svg = this.svg = Snap(this.svgWrap);
       const that = this;
 	    const { clientWidth, clientHeight } = svg.node;
