@@ -2,12 +2,9 @@ import React, { PropTypes } from 'react';
 import md5 from 'md5';
 import listen from 'event-listener';
 import classNames from 'classnames';
-import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg-min.js';
-import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.min.js';
-import '../../../node_modules/video.js/dist/video-js.min.css';
-// import 'video.js/dist/video-js.min.css';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';
 import './Broadcaster.css';
+let videojs;
 
 class Broadcaster extends React.Component {
   constructor(props) {
@@ -430,4 +427,7 @@ Broadcaster.propTypes = {
 	pptConfig:  PropTypes.object
 };
 
-export default Broadcaster;
+export default (video) => {
+	videojs = video;
+	return Broadcaster;
+};

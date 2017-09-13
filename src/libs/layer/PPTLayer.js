@@ -60,7 +60,7 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 				if (globalPlayer) {
 					groupPage.attr({ opacity: 0 });
 					if (globalPlayer.paused()) {
-						globalPlayer.el_.style.opacity = 1;
+						globalPlayer.el_.parentNode.style.opacity = 1;
 						globalPlayer.play();
 
 					} else {

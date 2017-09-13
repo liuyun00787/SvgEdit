@@ -22,6 +22,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+    opacity: 0;
 }
 .global-video.svgVideo-component{
     position: absolute;
@@ -34,7 +35,6 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    opacity: 0;
 }
 .vjs-control-bar{
     display: none!important;

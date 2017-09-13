@@ -1,12 +1,9 @@
 import React, { PropTypes } from 'react';
 import md5 from 'md5';
 import classNames from 'classnames';
-import Snap from 'imports?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg-min.js';
-import videojs from 'imports?this=>window,fix=>module.exports=0!video.js/dist/video.min.js';
-// import 'video.js/dist/video-js.min.css';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';
 import './Viewer.css';
-
+let videojs;
 class Viewer extends React.Component {
   constructor(props) {
     super(props);
@@ -78,7 +75,7 @@ class Viewer extends React.Component {
 			  } else {
 				  this.globalPlayer.play();
 				  const { page } = this.PPTLayer.getState();
-				  this.globalPlayer.el_.style.opacity = 1;
+				  this.globalPlayer.el_.parentNode.style.opacity = 1;
 				  // TODO 临时写法
 				  this.PPTLayer.layer.select(`.page-${page}`).attr({ opacity: 0 });
 			  }
@@ -324,4 +321,7 @@ Viewer.propTypes = {
   pptConfig: PropTypes.object
 };
 
-export default Viewer;
+export default (video) => {
+	videojs = video;
+	return Viewer;
+};
