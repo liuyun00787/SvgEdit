@@ -20,11 +20,12 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 	  }
   };
 	const group = target.group(attr).attr({ class: classNames('PPTLayer') });
-	const init = (list = []) => {
+	const init = ({ list = [], current = 1 }) => {
 		setState({ ppt: list }, () => {
 			list.map((item, index) => {
 				handleCreatePage({ type: item.type, item });
 			});
+			goTo(current);
 		});
 	};
 	const handleCreatePage = ({ type = 'image', item = {} }) => {
@@ -59,7 +60,9 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 				if (globalPlayer) {
 					groupPage.attr({ opacity: 0 });
 					if (globalPlayer.paused()) {
+						globalPlayer.el_.style.opacity = 1;
 						globalPlayer.play();
+
 					} else {
 						globalPlayer.pause();
 					}
@@ -95,10 +98,7 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 			})
 		}
 	};
-	init(ppt);
-	if (group.select(`.page-${state.page}`)) {
-		group.select(`.page-${state.page}`).attr({ x: 0, y: 0, opacity: 1 }).PageToFront();
-	}
+	init({ list: ppt, current });
 	return {
 	  layer: group,
 	  init,

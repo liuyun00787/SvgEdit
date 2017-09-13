@@ -48,6 +48,7 @@ class _TEST__ extends React.Component {
     });
   }
   handlePrev = () => {
+    const { dispatch } = this.props;
     let __PAGE__ = 1;
     if (this.Broadcaster) {
       const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
@@ -61,16 +62,18 @@ class _TEST__ extends React.Component {
       }
     }
     if (this.Viewer) {
+      dispatch({ type: 'socket/goTo', current: __PAGE__ });
       const { PPTLayer, whiteBoardLayer } = this.Viewer;
-      if (PPTLayer) {
-        PPTLayer.goTo(__PAGE__)
-      }
+      // if (PPTLayer) {
+      //   PPTLayer.goTo(__PAGE__)
+      // }
       if (whiteBoardLayer) {
         whiteBoardLayer.handleDelete();
       }
     }
   };
   handleNext = () => {
+    const { dispatch } = this.props;
     let __PAGE__ = 1;
     if (this.Broadcaster) {
       const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
@@ -84,10 +87,11 @@ class _TEST__ extends React.Component {
       }
     }
     if (this.Viewer) {
+      dispatch({ type: 'socket/goTo', current: __PAGE__ });
       const { PPTLayer, whiteBoardLayer } = this.Viewer;
-      if (PPTLayer) {
-        PPTLayer.goTo(__PAGE__)
-      }
+      // if (PPTLayer) {
+      //   PPTLayer.goTo(__PAGE__)
+      // }
       if (whiteBoardLayer) {
         whiteBoardLayer.handleDelete();
       }
@@ -109,7 +113,6 @@ class _TEST__ extends React.Component {
   renderB = (className) => {
     const { dispatch, socket, init } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
-    const { ppt } = init;
     const { scale, width, height } = this.state;
     const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
@@ -148,7 +151,7 @@ class _TEST__ extends React.Component {
             dispatch({ type: 'socket/deleteChange', item });
           }}
           pptConfig={{
-            ppt,
+            ...pptConfig,
             onPlayChange(paused) {
               dispatch({ type: 'socket/playChagne', paused });
             }
@@ -160,8 +163,6 @@ class _TEST__ extends React.Component {
   renderV = () => {
     const { socket, init } = this.props;
     const { drawItems, selectItem, mouseInfo, wBToolsInfo, pptConfig } = socket;
-    const { ppt } = init;
-    pptConfig.ppt = ppt;
     const { scale, width, height } = this.state;
     const t = Rematrix.translate(width/2 - (960 * scale.x)/2, height/2 - (540 * scale.y)/2);
     const s = Rematrix.scale(scale.x, scale.y);
@@ -180,7 +181,6 @@ class _TEST__ extends React.Component {
       >
         <Viewer
           ref={e => this.Viewer = e}
-          ppt={ppt}
           items={drawItems || []}
           width={960}
           height={540}

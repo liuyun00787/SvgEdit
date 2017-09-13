@@ -349,7 +349,7 @@ class Broadcaster extends React.Component {
 				  className="video-js svgVideo-component global-video"
 				  controls
 				  preload="auto"
-				  poster="//vjs.zencdn.net/v/oceans.png"
+				  poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
 				  data-setup='{}'>
 			    <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
 			    <p className="vjs-no-js">

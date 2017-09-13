@@ -26,14 +26,14 @@ class Viewer extends React.Component {
 	  const { width, height, mouseInfo, items, wBToolsInfo, pptConfig = {} } = this.props;
 	  const { width: NWidth, height: NHeight, mouseInfo: NMouseInfo, items: NItems, wBToolsInfo: NWBToolsInfo, selectItem = {}, pptConfig: nextPptConfig = {} } = nextProps;
 	  if (NWidth !== width || NHeight !== height) {
-		  if (this.whiteBoardLayer) {
-			  this.whiteBoardLayer.handleSetWH({
+		  if (this.PPTLayer) {
+			  this.PPTLayer.handleSetWH({
 				  width: NWidth,
 				  height: NHeight,
 			  });
 		  }
-		  if (this.PPTLayer) {
-			  this.PPTLayer.handleSetWH({
+		  if (this.whiteBoardLayer) {
+			  this.whiteBoardLayer.handleSetWH({
 				  width: NWidth,
 				  height: NHeight,
 			  });
@@ -48,6 +48,41 @@ class Viewer extends React.Component {
         });
       }
     }
+	  if (this.PPTLayer) {
+	  	const { init, goTo } = this.PPTLayer;
+	  	if ('pptConfig' in nextProps) {
+	  		const { pptConfig: nextPPTConfig, ppt: nextPPT } = nextProps;
+	  		const { pptConfig: prevPPTConfig, ppt: prevPPT } = this.props;
+	  		// 当前页数
+	  		if ('current' in nextPPTConfig) {
+				  if (nextPPTConfig.current !== prevPPTConfig.current) {
+					  goTo(nextPPTConfig.current);
+				  }
+			  } else {
+				  init({ list: [], current: 1 });
+			  }
+			  // ppt
+			  if ('ppt' in nextPPTConfig) {
+				  if (nextPPTConfig.current !== prevPPTConfig.current) {
+					  goTo(nextPPTConfig.current);
+				  }
+			  } else {
+
+			  }
+		  }
+	  }
+	  if (this.globalPlayer) {
+		  if (pptConfig.paused !== nextPptConfig.paused) {
+			  if (nextPptConfig.paused) {
+				  this.globalPlayer.pause();
+			  } else {
+				  this.globalPlayer.play();
+				  const { page } = this.PPTLayer.getState();
+				  // TODO 临时写法
+				  this.PPTLayer.layer.select(`.page-${page}`).attr({ opacity: 0 });
+			  }
+		  }
+	  }
     if (this.wBToolsLayer) {
       const { handleSetPosition, handleToolsChange } = this.wBToolsLayer;
       if (JSON.stringify(NWBToolsInfo) !== JSON.stringify(wBToolsInfo)) {
@@ -91,18 +126,6 @@ class Viewer extends React.Component {
             }
           }
         }
-        }
-      }
-    }
-    if (this.globalPlayer) {
-      if (pptConfig.paused !== nextPptConfig.paused) {
-        if (nextPptConfig.paused) {
-          this.globalPlayer.pause();
-        } else {
-          this.globalPlayer.play();
-          const { page } = this.PPTLayer.getState();
-          // TODO 临时写法
-          this.PPTLayer.layer.select(`.page-${page}`).attr({ opacity: 0 });
         }
       }
     }
@@ -227,7 +250,7 @@ class Viewer extends React.Component {
           className="video-js svgVideo-component global-video"
           controls
           preload="auto"
-          poster="//vjs.zencdn.net/v/oceans.png"
+          poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
           data-setup="{}"
         >
           <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
