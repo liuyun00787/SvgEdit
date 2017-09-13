@@ -78,6 +78,7 @@ class Viewer extends React.Component {
 			  } else {
 				  this.globalPlayer.play();
 				  const { page } = this.PPTLayer.getState();
+				  this.globalPlayer.el_.style.opacity = 1;
 				  // TODO 临时写法
 				  this.PPTLayer.layer.select(`.page-${page}`).attr({ opacity: 0 });
 			  }
