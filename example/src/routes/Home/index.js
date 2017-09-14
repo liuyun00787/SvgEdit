@@ -79,8 +79,10 @@ class _TEST__ extends React.Component {
       const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
       if (PPTLayer) {
         const { page, ppt } = PPTLayer.getState();
-        __PAGE__ = page + 1 <= ppt.length ? page + 1 : page;
-        PPTLayer.goTo(__PAGE__)
+        console.log(page, ppt.length);
+        __PAGE__ = page + 1 <= ppt.length ? page + 1 : ppt.length;
+        console.log(__PAGE__, 11111);
+        PPTLayer.goTo(__PAGE__, 'Broadcaster');
       }
       if (whiteBoardLayer) {
         whiteBoardLayer.handleDelete();

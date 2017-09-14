@@ -50,21 +50,17 @@ class Viewer extends React.Component {
 	  	if ('pptConfig' in nextProps) {
 	  		const { pptConfig: nextPPTConfig, ppt: nextPPT } = nextProps;
 	  		const { pptConfig: prevPPTConfig, ppt: prevPPT } = this.props;
-	  		// 当前页数
-	  		if ('current' in nextPPTConfig) {
-				  if (nextPPTConfig.current !== prevPPTConfig.current) {
-					  goTo(nextPPTConfig.current);
-				  }
-			  } else {
-				  init({ list: [], current: 1 });
-			  }
-			  // ppt
+			  // 初始化PPT
 			  if ('ppt' in nextPPTConfig) {
+				  if (JSON.stringify(nextPPTConfig.ppt) !== JSON.stringify(prevPPTConfig.ppt)) {
+					  init({ ppt: nextPPTConfig.ppt, current: nextPPTConfig.current || 1 });
+				  }
+			  }
+			  // 当前页数
+			  if ('current' in nextPPTConfig) {
 				  if (nextPPTConfig.current !== prevPPTConfig.current) {
 					  goTo(nextPPTConfig.current);
 				  }
-			  } else {
-
 			  }
 		  }
 	  }
@@ -162,7 +158,9 @@ class Viewer extends React.Component {
 		      height: clientHeight,
 	      },
 	      ppt: pptConfig.ppt || [],
+	      current: pptConfig.current || 1,
 	      target: svg,
+	      globalPlayer,
       });
 			// 白板层
 	    this.whiteBoardLayer = createWhiteBoardLayer({
@@ -242,24 +240,23 @@ class Viewer extends React.Component {
   renderVideo = () => {
     return (
       <div className={'video-js svgVideo-component-wrap global-video-wrap'}>
-        <video
-          ref={e => this.videoDom = e}
-          id={this.__ID__}
-          className="video-js svgVideo-component global-video"
-          controls
-          preload="auto"
-          poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
-          data-setup="{}"
-        >
-          <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
-          <p className="vjs-no-js">
-						To view this video please enable JavaScript, and consider upgrading to a
-						web browser that
-						<a href="http://videojs.com/html5-video-support/" target="_blank">
-							supports HTML5 video
-						</a>
-          </p>
-        </video>
+	      <video
+		      ref={e => this.videoDom = e}
+		      id={this.__ID__}
+		      className="video-js svgVideo-component global-video"
+		      controls
+		      preload="auto"
+		      // poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
+		      data-setup='{}'>
+		      {/*<source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />*/}
+		      <p className="vjs-no-js">
+			      To view this video please enable JavaScript, and consider upgrading to a
+			      web browser that
+			      <a href="http://videojs.com/html5-video-support/" target="_blank">
+				      supports HTML5 video
+			      </a>
+		      </p>
+	      </video>
       </div>
     );
   };

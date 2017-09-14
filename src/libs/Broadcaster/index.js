@@ -11,10 +11,7 @@ class Broadcaster extends React.Component {
     super(props);
 	  this.__ID__ = md5(`${new Date() + Math.random()}Broadcaster`);
 	  this.role = 'Broadcaster';
-    this.state = {
-    	images: [],
-	    text: '',
-    };
+    this.state = {};
 	  this.uploadInput = {};
 	  this.textInput = {};
 	  this.images = [];
@@ -78,6 +75,7 @@ class Broadcaster extends React.Component {
 		      height: clientHeight,
 	      },
 	      ppt: pptConfig.ppt || [],
+	      current: pptConfig.current || 1,
 	      target: svg,
 	      globalPlayer,
 	      onPlayChange: pptConfig.onPlayChange,
@@ -156,13 +154,13 @@ class Broadcaster extends React.Component {
 		    },
 	    });
 			// 鼠标层
-			this.mouseLayer = createMouseLayer({
-	      role,
-	      attr: {
-		      class: `mouse-${role}`,
-	      },
-	      target: svg,
-			});
+			// this.mouseLayer = createMouseLayer({
+	     //  role,
+	     //  attr: {
+		   //    class: `mouse-${role}`,
+	     //  },
+	     //  target: svg,
+			// });
 	    this.keyboard('bind');
 			// 初始画笔items
       this.initDraw();
@@ -346,9 +344,9 @@ class Broadcaster extends React.Component {
 				  className="video-js svgVideo-component global-video"
 				  controls
 				  preload="auto"
-				  poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
+				  // poster="https://ppt-cdn.class100.com/ppts/766/G5L8_2.png?Expires=1812799343&OSSAccessKeyId=LTAINwY5Hri5wwQL&Signature=E3CH0i8tAuHjDFytQmeHh2XB088%3D"
 				  data-setup='{}'>
-			    <source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />
+			    {/*<source src="https://ppt-cdn.class100.com/ppts/766/G5L8_3.mp4" type="video/mp4" />*/}
 			    <p className="vjs-no-js">
 					  To view this video please enable JavaScript, and consider upgrading to a
 					  web browser that

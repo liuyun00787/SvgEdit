@@ -174,16 +174,18 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
       const X = e.offsetX - state.downX;
       const Y = e.offsetY - state.downY;
       state.selectItem.attr({
-        width: (X > 0 ? X : 1),
-        height: (Y > 0 ? Y : 1),
+	      x: X < 0 ? Math.abs(state.downX + X) : state.downX,
+	      y: Y < 0 ? Math.abs(state.downY + Y) : state.downY,
+        width: Math.abs(X),
+        height: Math.abs(Y),
       });
     }
     if (tools === 'circle') {
       const X = e.offsetX - state.downX;
       const Y = e.offsetY - state.downY;
       state.selectItem.attr({
-        rx: (X > 0 ? X : 1),
-        ry: (Y > 0 ? Y : 1),
+        rx: Math.abs(X),
+        ry: Math.abs(Y),
       });
     }
     onDrawChange(state.selectItem);
@@ -290,7 +292,6 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 	        textInput,
 	        onDrawChange,
 	        handleShow: (path) => {
-	        	console.log(11111)
 		        if (state.tools === 'select') {
 			        wbItemWrap.handleShow(path);
 		        }

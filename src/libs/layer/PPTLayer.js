@@ -32,7 +32,7 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 		const groupPage = target.group({ opacity: 0 }).attr({
 			class: classNames('page', `page-${item.page}`),
 			__PAGETYPE__: type,
-		});
+		}).data('info', item);
 		const content = item.content || [];
 		const info = content[0] || {};
 		let attr = {
@@ -45,7 +45,9 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 		let page;
 		if (globalPlayer) {
 			globalPlayer.pause();
-			onPlayChange(globalPlayer.paused());
+			if (typeof onPlayChange === 'function') {
+				onPlayChange(globalPlayer.paused());
+			}
 		}
 		if (type === 'image') {
 			page = createImage({ attr, target });
@@ -62,7 +64,6 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 					if (globalPlayer.paused()) {
 						globalPlayer.el_.parentNode.style.opacity = 1;
 						globalPlayer.play();
-
 					} else {
 						globalPlayer.pause();
 					}
@@ -84,19 +85,27 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 		}
 	};
 	const goTo = (page) => {
-		if (group.select(`.page-${state.page}`) && group.select(`.page-${state.page}`).PageToFront) {
-			setState({ page }, () => {
-				if (globalPlayer) {
-					globalPlayer.pause();
-					if (typeof onPlayChange === 'function') {
-						onPlayChange(true);
-					}
+		setState({ page }, () => {
+			group.selectAll('.page').attr({ opacity: 0 });
+			group.select(`.page-${state.page}`).attr({ opacity: 1 }).PageToFront();
+			if (globalPlayer) {
+				globalPlayer.pause();
+				if (typeof onPlayChange === 'function') {
+					onPlayChange(true);
 				}
-				// group.selectAll('.page-content').attr({ opacity: 1 });
-				group.selectAll('.page').attr({ opacity: 0 });
-				group.select(`.page-${state.page}`).attr({ opacity: 1 }).PageToFront();
-			})
-		}
+				if (group.select(`.page-${state.page}`).attr('__PAGETYPE__') === 'video') {
+					const { content = [] } = group.select(`.page-${state.page}`).data('info') || {};
+					const { video, url } = content[0] || {};
+					globalPlayer.el_.parentNode.style.opacity = 1;
+					if (url) {
+						globalPlayer.poster(url);
+					}
+					globalPlayer.src(video || url);
+				} else {
+					globalPlayer.el_.parentNode.style.opacity = 0;
+				}
+			}
+		})
 	};
 	init({ list: ppt, current });
 	return {

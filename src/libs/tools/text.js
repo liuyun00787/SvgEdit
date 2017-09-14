@@ -1,7 +1,10 @@
 import classNames from 'classnames';
 
 export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDrawChange, handleShow, handleHide }) => {
-	const after = ' | ';
+	let after = ' | ';
+	if (role !== 'Broadcaster') {
+		after = '';
+	}
 	const path = target.paper.text(attr.x, attr.y, `${attr.text || '' } ${after}`).attr({
 		...attr,
 		fontSize: attr.fontSize ? attr.fontSize : 16,
@@ -23,7 +26,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 		const text = __TEXT__.replace(after, '');
 		if (typeof textInput.select === 'function') {
 			textInput.select({
-				text,
+				text: text === after ? ' ': text,
 				cb(text = '') {
 					const T = text + after;
 					path.attr({ text: T, __TEXT__: T.replace(after, '') || ' ' });
