@@ -145,23 +145,25 @@ class Viewer extends React.Component {
   init = () => {
     try {
       const role = this.role;
-      const { pptConfig = {} } = this.props;
+      const { pptConfig } = this.props;
       const svg = this.svg = Snap(this.svgWrap);
       const that = this;
 	    const { clientWidth, clientHeight } = svg.node;
 	    // 初始video
 	    const globalPlayer = this.initVideo();
 	    // ppt层
-      this.PPTLayer = createPPTLayer({ role,
-	      attr: {
-		      width: clientWidth,
-		      height: clientHeight,
-	      },
-	      ppt: pptConfig.ppt || [],
-	      current: pptConfig.current || 1,
-	      target: svg,
-	      globalPlayer,
-      });
+	    if (pptConfig) {
+		    this.PPTLayer = createPPTLayer({ role,
+			    attr: {
+				    width: clientWidth,
+				    height: clientHeight,
+			    },
+			    ppt: pptConfig.ppt || [],
+			    current: pptConfig.current || 1,
+			    target: svg,
+			    globalPlayer,
+		    });
+	    }
 			// 白板层
 	    this.whiteBoardLayer = createWhiteBoardLayer({
 		    role,

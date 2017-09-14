@@ -86,23 +86,25 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
 	};
 	const goTo = (page) => {
 		setState({ page }, () => {
-			group.selectAll('.page').attr({ opacity: 0 });
-			group.select(`.page-${state.page}`).attr({ opacity: 1 }).PageToFront();
-			if (globalPlayer) {
-				globalPlayer.pause();
-				if (typeof onPlayChange === 'function') {
-					onPlayChange(true);
-				}
-				if (group.select(`.page-${state.page}`).attr('__PAGETYPE__') === 'video') {
-					const { content = [] } = group.select(`.page-${state.page}`).data('info') || {};
-					const { video, url } = content[0] || {};
-					globalPlayer.el_.parentNode.style.opacity = 1;
-					if (url) {
-						globalPlayer.poster(url);
+			if (group.selectAll('.page')) {
+				group.selectAll('.page').attr({ opacity: 0 });
+				group.select(`.page-${state.page}`).attr({ opacity: 1 }).PageToFront();
+				if (globalPlayer) {
+					globalPlayer.pause();
+					if (typeof onPlayChange === 'function') {
+						onPlayChange(true);
 					}
-					globalPlayer.src(video || url);
-				} else {
-					globalPlayer.el_.parentNode.style.opacity = 0;
+					if (group.select(`.page-${state.page}`).attr('__PAGETYPE__') === 'video') {
+						const { content = [] } = group.select(`.page-${state.page}`).data('info') || {};
+						const { video, url } = content[0] || {};
+						globalPlayer.el_.parentNode.style.opacity = 1;
+						if (url) {
+							globalPlayer.poster(url);
+						}
+						globalPlayer.src(video || url);
+					} else {
+						globalPlayer.el_.parentNode.style.opacity = 0;
+					}
 				}
 			}
 		})

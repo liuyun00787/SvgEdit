@@ -63,24 +63,25 @@ class Broadcaster extends React.Component {
     try {
 	    const that = this;
 	    const role = this.role;
-	    const { pptConfig = {} } = this.props;
+	    const { pptConfig } = this.props;
 	    const svg = this.svg = new Snap(this.svgWrap);
 	    const { clientWidth, clientHeight } = svg.node;
 			// 初始video
 	    const globalPlayer = this.initVideo();
 	    // ppt层
-      this.PPTLayer = createPPTLayer({ role,
-	      attr: {
-		      width: clientWidth,
-		      height: clientHeight,
-	      },
-	      ppt: pptConfig.ppt || [],
-	      current: pptConfig.current || 1,
-	      target: svg,
-	      globalPlayer,
-	      onPlayChange: pptConfig.onPlayChange,
-      });
-
+	    if (pptConfig) {
+		    this.PPTLayer = createPPTLayer({ role,
+			    attr: {
+				    width: clientWidth,
+				    height: clientHeight,
+			    },
+			    ppt: pptConfig.ppt || [],
+			    current: pptConfig.current || 1,
+			    target: svg,
+			    globalPlayer,
+			    onPlayChange: pptConfig.onPlayChange,
+		    });
+	    }
 			// 白板层
       this.whiteBoardLayer = createWhiteBoardLayer({
 	      role,
