@@ -125,19 +125,19 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 		  dd.fill = dd.stroke;
 		  switch (Math.abs(dd.strokeWidth)) {
 			  case 5: {
-				  dd.fontSize = 16;
+				  dd.fontSize = 20;
 			  	break;
 			  }
 			  case 10: {
-				  dd.fontSize = 18;
+				  dd.fontSize = 36;
 				  break;
 			  }
 			  case 15: {
-				  dd.fontSize = 20;
+				  dd.fontSize = 48;
 				  break;
 			  }
 			  case 20: {
-				  dd.fontSize = 25;
+				  dd.fontSize = 72;
 				  break;
 			  }
 			  default: {
