@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { createItemWrap, createPath, createText, createRect, createCircle, createImage } from '../tools';
+import { createItemWrap, createPath, createText, createRect, createCircle, createImage, createVideo } from '../tools';
 
 Snap.plugin((Snap, Element) => {
   const elproto = Element.prototype;
@@ -56,9 +56,10 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
       return groupPage;
     }
     if (type === 'video') {
+
 			// attr.href = require('../../assets/videoPlayBG.png');
       page = createImage({ attr, target });
-      page.group.click((e) => {
+	    page.group.click((e) => {
 	      if (role !== 'Broadcaster') return;
         if (globalPlayer) {
           groupPage.attr({ opacity: 0 });
@@ -73,7 +74,9 @@ export default ({ role = 'Broadcaster', ppt = [], current = 1, attr = {}, target
           }
         }
       });
-      groupPage.add(page.group);
+	    // const videoPlay = createVideo({ attr, target });
+	    // groupPage.add(page.group, videoPlay.group);
+	    groupPage.add(page.group);
       group.add(groupPage);
       return groupPage;
     }

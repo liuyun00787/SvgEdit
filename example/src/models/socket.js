@@ -737,7 +737,7 @@ export default {
         },
       ],
       paused: true,
-      current: 1,
+      current: 2,
     },
   },
   reducers: {
