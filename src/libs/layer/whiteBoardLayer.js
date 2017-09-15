@@ -18,6 +18,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     tools: 'select',
 	  config: {},
   };
+
   const group = target.group({
     class: classNames('whiteBoardLayer', attr.className),
   });
@@ -31,7 +32,6 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
   group.attr({
     __ID__: group.id,
   });
-	console.log('==============')
   group.add(wbItemWrap.group);
 	whiteBoardBG.remove();
 	group.mousedown(function (e) {
@@ -108,7 +108,8 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
       drawPath = pathLayer.group;
     }
     drawPath.click(function () {
-      if (state.isDraw) {
+	    if (role !== 'Broadcaster') return;
+	    if (state.isDraw) {
         return;
       }
       if (this.attr('__TYPE__') === 'text') {
@@ -308,7 +309,8 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 		    path = createImage({ attr: item, target });
 	    }
       path.group.click(function () {
-        if (state.isDraw) {
+	      if (role !== 'Broadcaster') return;
+	      if (state.isDraw) {
           return;
         }
         state.isDraw = false;

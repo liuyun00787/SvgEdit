@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import './antd.min.css';
 import { Broadcaster, Viewer } from '../../../../src';
 import * as Rematrix from 'rematrix';
+import Mousetrap from 'mousetrap';
 
 class _TEST__ extends React.Component {
   constructor(props) {
@@ -46,6 +47,9 @@ class _TEST__ extends React.Component {
         this.handleScale({ width, height });
       }
     });
+    const that = this;
+    Mousetrap.bind('left', function() { that.handlePrev(); });
+    Mousetrap.bind('right', function() { that.handleNext(); });
   }
   handlePrev = () => {
     const { dispatch } = this.props;
@@ -79,9 +83,7 @@ class _TEST__ extends React.Component {
       const { PPTLayer, whiteBoardLayer } = this.Broadcaster;
       if (PPTLayer) {
         const { page, ppt } = PPTLayer.getState();
-        console.log(page, ppt.length);
         __PAGE__ = page + 1 <= ppt.length ? page + 1 : ppt.length;
-        console.log(__PAGE__, 11111);
         PPTLayer.goTo(__PAGE__, 'Broadcaster');
       }
       if (whiteBoardLayer) {
