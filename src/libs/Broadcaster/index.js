@@ -128,7 +128,9 @@ class Broadcaster extends React.Component {
 				    if (clearAll) {
 					    whiteBoardLayer.handleDelete();
 				    } else if (whiteBoardLayer.getIsSelect()) {
-					    whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+				    	if (whiteBoardLayer.getSelectItem()) {
+						    whiteBoardLayer.handleDelete(whiteBoardLayer.getSelectItem().attr());
+					    }
 				    }
 			    }
 		    },
@@ -195,11 +197,15 @@ class Broadcaster extends React.Component {
     }
   };
   initWBtools = () => {
+  	const { width = 0, height = 0 } = this.props;
     if (this.wBToolsLayer) {
       const { wBToolsInfo = {} } = this.props;
-      const { handleSetPosition, handleToolsChange } = this.wBToolsLayer;
+      const { layer, handleSetPosition, handleToolsChange } = this.wBToolsLayer;
       if (wBToolsInfo.transform) {
-        handleSetPosition(wBToolsInfo.transform);
+        handleSetPosition({ transform: wBToolsInfo.transform });
+      } else {
+      	const toolsW = layer.attr('width');
+	      handleSetPosition({ x: width/2 - toolsW/2, y: 5 });
       }
       if (wBToolsInfo.tool) {
         handleToolsChange(wBToolsInfo.tool);

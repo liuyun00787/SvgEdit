@@ -1,6 +1,6 @@
 {
   "name": "class100-ppt",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "main": "lib/index.js",
   "scripts": {
     "build-docs": "npm run build && cd example && npm run build-docs",

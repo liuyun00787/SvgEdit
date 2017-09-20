@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>brush</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M10.0358999,7.09023146 C12.2607145,8.17448507 16.1237186,8.89175802 20.5167187,8.89175802 C27.4110446,8.89175802 33,7.12512781 33,4.94587901 C33,2.76663021 27.4110446,1 20.5167187,1 C16.0999955,1 12.2190079,1.72504072 10,2.81912419" id="path-1"></path>
+    </defs>
+    <g id="效果图" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="常态_透明板_工具状态" transform="translate(-732.000000, -165.000000)">
+            <g id="画笔-copy-2" transform="translate(724.000000, 158.000000)">
+                <g id="brush" transform="translate(20.902808, 20.096194) rotate(-45.000000) translate(-20.902808, -20.096194) translate(4.402808, 15.096194)">
+                    <g id="Oval-5">
+                        <use fill="#000000" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <path stroke="#FFFFFF" stroke-width="1.5" d="M10.7818575,6.60614754 C13.0027844,7.5531785 16.5950409,8.14175802 20.5167187,8.14175802 C26.986307,8.14175802 32.25,6.47794102 32.25,4.94587901 C32.25,3.413817 26.986307,1.75 20.5167187,1.75 C16.5775191,1.75 12.9713942,2.34394689 10.7540472,3.29748485 L10.7818575,6.60614754 Z"></path>
+                    </g>
+                    <path d="M14.1829959,2 L14,7.99720873" id="Path-7" stroke="#FFFFFF" stroke-width="1.5"></path>
+                    <path d="M17,2 L17,8" id="Path-7-Copy" stroke="#FFFFFF" stroke-width="1.5"></path>
+                    <path d="M10.2972169,4.91047516 C10.7090408,2.81532255 9.27167965,1.55581862 7.6984533,1.34696093 C6.12522695,1.13810325 4.91375102,2.28077503 4.25378817,3.61819584 C3.59382533,4.95561666 1.96243001,4.80196531 1.33706804,4.23747305 C0.711706077,3.67298079 0.541541981,5.96562602 3.5622472,7.61568123 C6.58295242,9.26573644 9.88539297,7.00562778 10.2972169,4.91047516 Z" id="Path-4" stroke="#FFFFFF" stroke-width="1.5" fill="#000000" transform="translate(5.666579, 4.753294) rotate(16.000000) translate(-5.666579, -4.753294) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

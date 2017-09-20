@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>rec</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="效果图" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="常态_透明板_工具状态" transform="translate(-812.000000, -165.000000)" stroke="#FFFFFF" stroke-width="1.5" fill="#000000">
+            <g id="矩形-copy-2" transform="translate(804.000000, 158.000000)">
+                <path d="M13,10 L28,10 L28,10 C30.209139,10 32,11.790861 32,14 L32,25 L32,25 C32,27.209139 30.209139,29 28,29 L13,29 L13,29 C10.790861,29 9,27.209139 9,25 L9,14 L9,14 C9,11.790861 10.790861,10 13,10 L13,10 Z M12.9962691,13.0218751 C12.4439843,13.0218751 11.9962691,13.4695903 11.9962691,14.0218751 L11.9962691,24.9758868 C11.9962691,25.5281715 12.4439843,25.9758868 12.9962691,25.9758868 L12.9962691,25.9758868 L28.0237553,25.9758868 C28.5760401,25.9758868 29.0237553,25.5281715 29.0237553,24.9758868 L29.0237553,14.0218751 C29.0237553,13.4695903 28.5760401,13.0218751 28.0237553,13.0218751 L12.9962691,13.0218751 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

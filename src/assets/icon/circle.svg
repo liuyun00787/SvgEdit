@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>circle</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="效果图" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="常态_透明板_工具状态" transform="translate(-852.000000, -165.000000)" stroke="#FFFFFF" stroke-width="1.5" fill="#000000">
+            <g id="圆-copy-2" transform="translate(844.000000, 158.000000)">
+                <path d="M20.5,31 C14.1487254,31 9,25.8512746 9,19.5 C9,13.1487254 14.1487254,8 20.5,8 C26.8512746,8 32,13.1487254 32,19.5 C32,25.8512746 26.8512746,31 20.5,31 Z M20.4999752,27.8999977 C25.1391669,27.8999977 28.8999748,24.1391898 28.8999748,19.4999981 C28.8999748,14.8608064 25.1391669,11.0999985 20.4999752,11.0999985 C15.8607835,11.0999985 12.0999756,14.8608064 12.0999756,19.4999981 C12.0999756,24.1391898 15.8607835,27.8999977 20.4999752,27.8999977 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

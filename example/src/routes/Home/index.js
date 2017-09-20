@@ -50,6 +50,8 @@ class _TEST__ extends React.Component {
     const that = this;
     Mousetrap.bind('left', function() { that.handlePrev(); });
     Mousetrap.bind('right', function() { that.handleNext(); });
+    Mousetrap.bind('up', function() { that.handlePrev(); });
+    Mousetrap.bind('down', function() { that.handleNext(); });
   }
   handlePrev = () => {
     const { dispatch } = this.props;
