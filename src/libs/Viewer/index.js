@@ -153,7 +153,8 @@ class Viewer extends React.Component {
 	    const globalPlayer = this.initVideo();
 	    // ppt层
 	    if (pptConfig) {
-		    this.PPTLayer = createPPTLayer({ role,
+		    this.PPTLayer = createPPTLayer({
+			    role,
 			    attr: {
 				    width: clientWidth,
 				    height: clientHeight,

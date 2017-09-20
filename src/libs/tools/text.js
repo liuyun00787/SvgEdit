@@ -5,10 +5,10 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 	if (role !== 'Broadcaster') {
 		after = '';
 	}
-	const path = target.paper.text(attr.x, attr.y, `${attr.text || '' } ${after}`).attr({
+	const path = target.paper.text(attr.x, attr.y, `${attr.text || ('__TEXT__' in attr && attr.__TEXT__ !== '' ? attr.__TEXT__ : ' ' )  || '' } ${ role === 'Broadcaster' ? after : ' '}`).attr({
 		...attr,
 		fontSize: attr.fontSize ? attr.fontSize : 16,
-		__TEXT__: attr.__TEXT__ ? attr.__TEXT__ : '',
+		__TEXT__: attr.__TEXT__ ? attr.__TEXT__ : ' ',
 		__TYPE__: attr.__TYPE__ ? attr.__TYPE__ : 'text',
 	});
 	if (!attr.__ID__) {
@@ -43,7 +43,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 					if (!(text || ' ').replace(/(^\s*)|(\s*$)/g, '') && typeof handleHide === 'function') {
 						path.attr({ text: ' ', __TEXT__: ' ' });
 						if (typeof onDrawChange === 'function') {
-							onDrawChange(path);
+							// onDrawChange(path);
 						}
 						handleHide();
 						path.remove();
@@ -52,12 +52,17 @@ export default ({ role = 'Broadcaster', attr = {}, target, textInput = {}, onDra
 			});
 		}
 	};
-	setTimeout(setText, 100);
-
+	if (role === 'Broadcaster') {
+		// setText();
+		setTimeout(setText, 100);
+	}
   return {
     group: path,
     handeFocus() {
-      setTimeout(setText, 100);
+    	if (role === 'Broadcaster') {
+		    // setText();
+		    setTimeout(setText, 100);
+	    }
     },
   };
 };

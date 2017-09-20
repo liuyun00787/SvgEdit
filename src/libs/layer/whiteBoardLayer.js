@@ -8,215 +8,327 @@ Snap.plugin((Snap, Element) => {
   };
 });
 
+export const TOOLS = {
+	hand: '__HAND__',
+	path: '__PATH__',
+	text: '__TEXT__',
+	rect: '__RECT__',
+	circle: '__CIRCLE__',
+};
+
 export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDrawChange, textInput }) => {
-  const state = {
+  let state = {
     downX: 0,
     downY: 0,
     selectItem: null,
     isDraw: false,
     isSelect: false,
     tools: 'select',
+	  tool: {
+    	type: 'select',
+		  config: {
+
+		  },
+	  },
 	  config: {},
   };
+	const layer = target.group({
+		class: classNames('whiteBoardLayer', attr.className),
+	});
+	const wbItemWrap = createItemWrap({ role, target, onDrawChange });
+	const whiteBoardBG = target.rect(0, 0, 0, 0).attr({ class: 'whiteBoardBG', fill: '#ffff00', fillOpacity: 0 }).attr({
+		width: attr.width || 0,
+		height: attr.height || 0,
+	});
 
-  const group = target.group({
-    class: classNames('whiteBoardLayer', attr.className),
-  });
+	// 白板舞台
+	const wbCanvas = (function() {
+		const group = target.group();
+		group.attr({
+			__ID__: group.id,
+		});
+		group.add(wbItemWrap.group);
+		whiteBoardBG.remove();
+		layer.mousedown(function (e) {
+			if (target.select('.tools-setWrap')) {
+				target.select('.tools-setWrap').remove();
+			}
+			if (role !== 'Broadcaster') return;
+			const { isDraw, isSelect, tools } = state;
+			const { isActive } = this.data();
+			state.downX = e.offsetX; state.downY = e.offsetY;
+			let pathLayer;
+			let drawPath;
+			if (!isDraw) {
+				return;
+			}
+			if (isSelect) {
+				return;
+			}
+			if (isActive) {
+				return;
+			}
+			if (tools === 'color') {
+				return;
+			}
+			this.data('isActive', true);
+			if (tools === 'path') {
+				pathLayer = createPath({
+					role,
+					attr: {
+						x: e.offsetX,
+						y: e.offsetY,
+					},
+					target,
+				});
+				drawPath = pathLayer.group;
+			}
+			if (tools === 'text') {
+				pathLayer = createText({
+					role,
+					attr: {
+						x: e.offsetX,
+						y: e.offsetY,
+					},
+					target,
+					textInput,
+					onDrawChange,
+					handleShow: (path) => {
+						if (state.tools === 'select') {
+							wbItemWrap.handleShow(path);
+						}
+					},
+					handleHide: () => {
+						wbItemWrap.handleHide();
+					},
+				});
+				drawPath = pathLayer.group;
+			}
+			if (tools === 'rect') {
+				pathLayer = createRect({
+					role,
+					attr: {
+						x: e.offsetX,
+						y: e.offsetY,
+					},
+					target,
+				});
+				drawPath = pathLayer.group;
+			}
+			if (tools === 'circle') {
+				pathLayer = createCircle({
+					role,
+					attr: {
+						x: e.offsetX,
+						y: e.offsetY,
+					},
+					target,
+				});
+				drawPath = pathLayer.group;
+			}
+			drawPath.click(function () {
+				if (role !== 'Broadcaster') return;
+				if (state.isDraw) {
+					return;
+				}
+				if (this.attr('__TYPE__') === 'text') {
+					pathLayer.handeFocus();
+				}
+				wbItemWrap.handleShow(this);
+				state.isDraw = false;
+				state.isSelect = true;
+				state.selectItem = this;
+				onDrawChange(this);
+			});
+			state.selectItem = drawPath;
+			if (drawPath.attr('__TYPE__') === 'text') {
+				const dd = Object.assign({}, state.config);
+				dd.fill = dd.stroke;
+				switch (Math.abs(dd.strokeWidth)) {
+					case 5: {
+						dd.fontSize = 20;
+						break;
+					}
+					case 10: {
+						dd.fontSize = 36;
+						break;
+					}
+					case 15: {
+						dd.fontSize = 48;
+						break;
+					}
+					case 20: {
+						dd.fontSize = 72;
+						break;
+					}
+					default: {
+						dd.fontSize = 16;
+					}
+				}
+				delete dd.strokeWidth;
+				delete dd.stroke;
+				drawPath.attr(dd);
+			} else {
+				drawPath.attr(state.config);
+			}
+			group.add(drawPath);
+			if ( typeof onDrawChange === 'function' ) {
+				if (drawPath) {
+					onDrawChange(drawPath);
+				}
+			}
+			// wbItemWrap.handleShow(drawPath);
+		});
+		layer.mousemove(function (e) {
+			if (role !== 'Broadcaster') return;
+			const { isDraw, tools } = state;
+			const { isActive } = this.data();
+			if (!isDraw) {
+				return;
+			}
+			if (!isActive) {
+				return;
+			}
+			if (tools === 'color') {
+				return;
+			}
+			if (tools === 'path') {
+				let { d } = state.selectItem.attr();
+				state.selectItem.attr({ d: d += `,${e.offsetX},${e.offsetY}` });
+			}
+			if (tools === 'rect') {
+				const X = e.offsetX - state.downX;
+				const Y = e.offsetY - state.downY;
+				state.selectItem.attr({
+					x: X < 0 ? Math.abs(state.downX + X) : state.downX,
+					y: Y < 0 ? Math.abs(state.downY + Y) : state.downY,
+					width: Math.abs(X),
+					height: Math.abs(Y),
+				});
+			}
+			if (tools === 'circle') {
+				console.log(tools, 111);
+				const X = e.offsetX - state.downX;
+				const Y = e.offsetY - state.downY;
+				state.selectItem.attr({
+					cx: state.downX + X/2,
+					cy: state.downY + Y/2,
+					rx: Math.abs(X / 2),
+					ry: Math.abs(Y / 2),
+				});
+			}
+			if (typeof onDrawChange === 'function') {
+				onDrawChange(state.selectItem);
+			}
+			// wbItemWrap.handleShow(state.selectItem);
+		});
+		layer.mouseup(function () {
+			if (role !== 'Broadcaster') return;
+			const { isDraw, tools } = state;
+			if (isDraw) {
+				// wbItemWrap.handleShow(state.selectItem);
+				// state.isSelect = true;
+			}
+			if (tools === 'color') {
+				return;
+			}
+			if (typeof onDrawChange === 'function') {
+				if (state.selectItem) {
+					onDrawChange(state.selectItem);
+				}
+			}
+			// wbItemWrap.handleShow(state.selectItem);
+			this.data('isActive', false);
+		});
+		layer.dblclick(function () {
+			if (role !== 'Broadcaster') return;
+			wbItemWrap.handleHide();
+			state.selectItem = null;
+			state.isSelect = false;
+			this.data('isActive', false);
+		});
+		return group;
+	})();
 
-  const wbItemWrap = createItemWrap({ role, target, onDrawChange });
+	layer.add(wbCanvas);
 
-  const whiteBoardBG = target.rect(0, 0, 0, 0).attr({ class: 'whiteBoardBG', fill: '#ffff00', fillOpacity: 0 }).attr({
-    width: attr.width || 0,
-    height: attr.height || 0,
-  });
-  group.attr({
-    __ID__: group.id,
-  });
-  group.add(wbItemWrap.group);
-	whiteBoardBG.remove();
-	group.mousedown(function (e) {
-	  if (target.select('.tools-setWrap')) {
-		  target.select('.tools-setWrap').remove();
-	  }
-    if (role !== 'Broadcaster') return;
-    const { isDraw, isSelect, tools } = state;
-    const { isActive } = this.data();
-    state.downX = e.offsetX; state.downY = e.offsetY;
-    let pathLayer;
-    let drawPath;
-    if (!isDraw) {
-      return;
-    }
-    if (isSelect) {
-      return;
-    }
-    if (isActive) {
-      return;
-    }
-	  if (tools === 'color') {
-		  return;
-	  }
-    this.data('isActive', true);
-    if (tools === 'path') {
-	    pathLayer = createPath({
-		    attr: {
-			    x: e.offsetX,
-			    y: e.offsetY,
-		    },
-		    target,
-	    });
-      drawPath = pathLayer.group;
-    }
-    if (tools === 'text') {
-      pathLayer = createText({
-	      attr: {
-		      x: e.offsetX,
-		      y: e.offsetY,
-	      },
-	      target,
-	      textInput,
-	      onDrawChange,
-	      handleShow: (path) => {
-	      	if (state.tools === 'select') {
-			      wbItemWrap.handleShow(path);
-		      }
-	      },
-	      handleHide: () => {
-		      wbItemWrap.handleHide();
-	      },
-      });
-      drawPath = pathLayer.group;
-    }
-    if (tools === 'rect') {
-	    pathLayer = createRect({
-		    attr: {
-			    x: e.offsetX,
-			    y: e.offsetY,
-	      },
-		    target,
-	    });
-      drawPath = pathLayer.group;
-    }
-    if (tools === 'circle') {
-      pathLayer = createCircle({
-		    attr: {
-			    x: e.offsetX,
-			    y: e.offsetY,
-		    },
-	      target,
-      });
-      drawPath = pathLayer.group;
-    }
-    drawPath.click(function () {
-	    if (role !== 'Broadcaster') return;
-	    if (state.isDraw) {
-        return;
-      }
-      if (this.attr('__TYPE__') === 'text') {
-        pathLayer.handeFocus();
-      }
-	    wbItemWrap.handleShow(this);
-      state.isDraw = false;
-      state.isSelect = true;
-      state.selectItem = this;
-    });
-    state.selectItem = drawPath;
-	  if (drawPath.attr('__TYPE__') === 'text') {
-	  	const dd = Object.assign({}, state.config);
-		  dd.fill = dd.stroke;
-		  switch (Math.abs(dd.strokeWidth)) {
-			  case 5: {
-				  dd.fontSize = 20;
-			  	break;
-			  }
-			  case 10: {
-				  dd.fontSize = 36;
-				  break;
-			  }
-			  case 15: {
-				  dd.fontSize = 48;
-				  break;
-			  }
-			  case 20: {
-				  dd.fontSize = 72;
-				  break;
-			  }
-			  default: {
-				  dd.fontSize = 16;
-			  }
-		  }
-		  delete dd.strokeWidth;
-		  delete dd.stroke;
-		  drawPath.attr(dd);
-	  } else {
-		  drawPath.attr(state.config);
-	  }
-    group.add(drawPath);
-    onDrawChange(drawPath);
-  });
-	group.mousemove(function (e) {
-    if (role !== 'Broadcaster') return;
-    const { isDraw, tools } = state;
-    const { isActive } = this.data();
-    if (!isDraw) {
-      return;
-    }
-    if (!isActive) {
-      return;
-    }
-	  if (tools === 'color') {
-		  return;
-	  }
-    if (tools === 'path') {
-      let { d } = state.selectItem.attr();
-      state.selectItem.attr({ d: d += `,${e.offsetX},${e.offsetY}` });
-    }
-    if (tools === 'rect') {
-      const X = e.offsetX - state.downX;
-      const Y = e.offsetY - state.downY;
-      state.selectItem.attr({
-	      x: X < 0 ? Math.abs(state.downX + X) : state.downX,
-	      y: Y < 0 ? Math.abs(state.downY + Y) : state.downY,
-        width: Math.abs(X),
-        height: Math.abs(Y),
-      });
-    }
-    if (tools === 'circle') {
-      const X = e.offsetX - state.downX;
-      const Y = e.offsetY - state.downY;
-      state.selectItem.attr({
-        rx: Math.abs(X),
-        ry: Math.abs(Y),
-      });
-    }
-    onDrawChange(state.selectItem);
-  });
-	group.mouseup(function () {
-    if (role !== 'Broadcaster') return;
-    const { isDraw, tools } = state;
-    if (isDraw) {
-      // wbItemWrap.handleShow(state.selectItem);
-      // state.isSelect = true;
-    }
-	  if (tools === 'color') {
-		  return;
-	  }
-    this.data('isActive', false);
-  });
-	group.dblclick(function () {
-    if (role !== 'Broadcaster') return;
-    wbItemWrap.handleHide();
-    state.selectItem = null;
-    state.isSelect = false;
-	  this.data('isActive', false);
-  });
   return {
-	  layer: group,
+	  layer,
+	  // 设置宽高
+	  handleSetWH: ({ width, height }) => {
+		  whiteBoardBG.attr({ width, height });
+	  },
+	  getState() {
+	  	return state;
+	  },
+	  setState(nState = {}, callback) {
+		  state = { ...state, ...nState };
+		  if (typeof callback === 'function') {
+			  callback();
+		  }
+	  },
+	  // 设置功具
+	  setToolConf({ type = 'hand', config = {} }, callback) {
+		  const tool = {
+		  	type,
+			  config,
+		  };
+			switch (type) {
+				case 'hand': {
+					tool.type = TOOLS.hand;
+					break;
+				}
+				case 'path': {
+					tool.type = TOOLS.path;
+					break;
+				}
+				case 'text': {
+					tool.type = TOOLS.text;
+					break;
+				}
+				case 'rect': {
+					tool.type = TOOLS.rect;
+					break;
+				}
+				case 'circle': {
+					tool.type = TOOLS.circle;
+					break;
+				}
+				default: {
+					tool.type = TOOLS.hand;
+				}
+			}
+			state = {
+				...state,
+				tool: tool,
+			};
+		  if (typeof callback === 'function') {
+			  callback();
+		  }
+	  },
+	  // 设置可用
+	  setDisable(has) {
+			console.log(has);
+	  },
+	  // 选择笔画
+	  selectItem(id) {
+		  console.log(id);
+	  },
+	  // 画一笔
+	  draw(item) {
+	  	console.log(item);
+	  },
+	  // 清除一笔
+	  clear(id) {
+			console.log(id);
+	  },
+
+
 	  handleSetConfig: (config) => {
 		  state.config = config;
 	  },
     handleSelectItem: (__ID__) => {
-	    return group.select(`.${__ID__}`);
+	    return wbCanvas.select(`.${__ID__}`);
     },
     getSelectItem: () => {
       return state.selectItem;
@@ -224,32 +336,29 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     getIsSelect: () => {
 	    return state.isSelect;
     },
-    handleSetWH: ({ width, height }) => {
-      whiteBoardBG.attr({ width, height });
-    },
     handleSetIsDraw: (isDraw = false) => {
       state.isDraw = isDraw;
     },
     handleDelete: (path, isArray) => {
-      group.data('isActive', false);
+	    wbCanvas.data('isActive', false);
       if (path) {
         if (isArray) {
           path.map((item) => {
-            if (group.select(`.${item.__ID__}`)) {
-              group.select(`.${item.__ID__}`).remove();
+            if (wbCanvas.select(`.${item.__ID__}`)) {
+	            wbCanvas.select(`.${item.__ID__}`).remove();
             }
           });
         } else if (state.isSelect) {
-	          if (group.select(`.${path.__ID__}`)) {
-		          group.select(`.${path.__ID__}`).remove();
+	          if (wbCanvas.select(`.${path.__ID__}`)) {
+		          wbCanvas.select(`.${path.__ID__}`).remove();
 	          }
           state.selectItem = null;
           wbItemWrap.handleHide(path);
         }
       } else {
-        group.clear();
+	      wbCanvas.clear();
         if (state.tools !== 'select') {
-	        group.add(whiteBoardBG);
+	        wbCanvas.add(whiteBoardBG);
         }
         state.selectItem = null;
         wbItemWrap.handleHide(path);
@@ -269,7 +378,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
         state.isSelect = true;
 	      whiteBoardBG.remove();
       } else {
-	      group.add(whiteBoardBG);
+	      wbCanvas.add(whiteBoardBG);
       	if (config) {
 		      state.config = JSON.parse(config);
 	      }
@@ -282,12 +391,14 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
       let path;
       if (item.__TYPE__ === 'path') {
 	      path = createPath({
+		      role,
 		      attr: item,
 		      target,
 	      });
       }
       if (item.__TYPE__ === 'text') {
         path = createText({
+	        role,
 	        attr: item,
 	        target,
 	        textInput,
@@ -300,13 +411,13 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
         });
       }
       if (item.__TYPE__ === 'rect') {
-	      path = createRect({ attr: item, target });
+	      path = createRect({ role, attr: item, target });
       }
 	    if (item.__TYPE__ === 'circle') {
-		    path = createCircle({ attr: item, target });
+		    path = createCircle({ role, attr: item, target });
 	    }
 	    if (item.__TYPE__ === 'image') {
-		    path = createImage({ attr: item, target });
+		    path = createImage({ role, attr: item, target });
 	    }
       path.group.click(function () {
 	      if (role !== 'Broadcaster') return;
@@ -321,7 +432,7 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
           path.handeFocus();
         }
       });
-      group.add(path.group);
+	    wbCanvas.add(path.group);
       state.selectItem = path.group;
       return path.group;
     },
