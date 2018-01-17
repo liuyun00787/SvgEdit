@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React  from 'react';
+import PropTypes from 'prop-types';
 import md5 from 'md5';
 import classNames from 'classnames';
 import { createPPTLayer, createWhiteBoardLayer, createMouseLayer, createWBToolsLayer } from '../layer/index';

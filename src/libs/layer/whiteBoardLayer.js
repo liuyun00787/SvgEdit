@@ -389,6 +389,12 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
     },
     handleDraw: (item) => {
       let path;
+      if (layer.select(`#${item.__ID__}`)) {
+      	if (item.__TYPE__ === 'text') {
+		      return layer.select(`#${item.__ID__}`).attr({ ...item, text: item.__TEXT__ });
+	      }
+	      return layer.select(`#${item.__ID__}`).attr(item);
+      }
       if (item.__TYPE__ === 'path') {
 	      path = createPath({
 		      role,

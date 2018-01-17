@@ -34,7 +34,6 @@ class _TEST__ extends React.Component {
         this.page = true;
         this.handleScale({ width, height });
       }, 500);
-
     }
     window.addEventListener('resize', () => {
       if (this.wrap) {
