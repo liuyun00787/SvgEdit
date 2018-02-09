@@ -354,6 +354,12 @@ export default ({ role = 'Broadcaster', attr = {}, target, onDeleteChange, onDra
 	          }
           state.selectItem = null;
           wbItemWrap.handleHide(path);
+        } else {
+	        if (wbCanvas.select(`.${path.__ID__}`)) {
+		        wbCanvas.select(`.${path.__ID__}`).remove();
+	        }
+	        state.selectItem = null;
+	        wbItemWrap.handleHide(path);
         }
       } else {
 	      wbCanvas.clear();
